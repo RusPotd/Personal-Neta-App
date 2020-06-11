@@ -21,7 +21,7 @@ class ViewAllComplaints : AppCompatActivity() {
     private var mUserChats: List<Posts>? = null
     private var userAdapter: PostAdapter? = null
     private var recylerView: RecyclerView? = null
-    private var Admin: Boolean = false
+    private var Admin: Boolean = true
     private var refUsers: DatabaseReference? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,7 +38,7 @@ class ViewAllComplaints : AppCompatActivity() {
 
         val toolbar : Toolbar = findViewById(R.id.myposts_toolbar)                 //create a back button on top of toolbar
         setSupportActionBar(toolbar)
-        supportActionBar!!.title = "My Posts"
+        supportActionBar!!.title = "All Complaints"
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         toolbar.setNavigationOnClickListener {
             val intent =  Intent(this@ViewAllComplaints, MainActivity::class.java)
@@ -47,41 +47,29 @@ class ViewAllComplaints : AppCompatActivity() {
             finish()
         }
 
-        refUsers = FirebaseDatabase.getInstance().reference.child("Posts").child(FirebaseAuth.getInstance().currentUser!!.uid)  //get all users ids
+        refUsers = FirebaseDatabase.getInstance().reference.child("Posts") //.child(FirebaseAuth.getInstance().currentUser!!.uid)  //get all users ids
 
         refUsers!!.addValueEventListener(object: ValueEventListener {
             override fun onDataChange(p0: DataSnapshot) {
                 (mUserChats as ArrayList<Posts>).clear()
-                //Toast.makeText(context, "Retriving Admin Only", Toast.LENGTH_LONG).show()
-                if(p0.exists()){
-                    for (snapshot in p0.children) {
-                        val user: Posts? = snapshot.getValue(Posts::class.java)
-
-                        (mUserChats as ArrayList<Posts>).add(user!!)
+                for (user in p0.children){
+                    if(user.key!!.equals(FirebaseAuth.getInstance().currentUser!!.uid)){
+                        continue
+                    }
+                    else{
+                        for (postId in user.children){
+                            val postData: Posts? = postId.getValue(Posts::class.java)
+                            (mUserChats as ArrayList<Posts>).add(postData!!)
+                        }
                     }
                 }
-                try {
-                    FirebaseDatabase.getInstance().reference.child("Admin")
-                        .addListenerForSingleValueEvent(object : ValueEventListener {
-                            override fun onDataChange(p0: DataSnapshot) {
-                                if(p0.child("uid").value!!.equals(FirebaseAuth.getInstance().uid)){
-                                    //Admin founded
-                                    Admin = true
-                                }
-                                userAdapter = PostAdapter(applicationContext, mUserChats!!, Admin)
-                                recylerView!!.smoothScrollToPosition(userAdapter!!.itemCount);
-                                recylerView!!.isNestedScrollingEnabled = false
-                                recylerView!!.adapter = userAdapter
-                            }
-                            override fun onCancelled(p0: DatabaseError) {
-                                //on Cancel
-                            }
-                        })
-                }
-                catch (e: Exception) {
-
-                }
-
+                //Retriving all except Admin
+                var MUserChats : MutableList<Posts> = ArrayList(mUserChats!!)
+                Collections.sort(MUserChats, ComparatorClass())
+                userAdapter = PostAdapter(applicationContext, MUserChats!!, Admin)
+                recylerView!!.smoothScrollToPosition(userAdapter!!.itemCount);
+                recylerView!!.isNestedScrollingEnabled = false
+                recylerView!!.adapter = userAdapter
             }
 
             override fun onCancelled(p0: DatabaseError) {

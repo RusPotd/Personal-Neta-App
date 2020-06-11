@@ -201,8 +201,47 @@ class MainActivity : AppCompatActivity() {
         }
 
         menuMain.findItem(R.id.nav_all_complaints).setOnMenuItemClickListener {
-            val intent = Intent(this@MainActivity, MyPostsActivity::class.java)
-            intent.putExtra("admin", "admin")
+            val intent = Intent(this@MainActivity, ViewAllComplaints::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+            finish()
+            true
+        }
+
+        menuMain.findItem(R.id.nav_manage_users).setOnMenuItemClickListener {
+            val intent = Intent(this@MainActivity, manageUsers::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+            finish()
+            true
+        }
+
+        menuMain.findItem(R.id.nav_feedback).setOnMenuItemClickListener {
+            val intent = Intent(this@MainActivity, FeedBack::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+            finish()
+            true
+        }
+
+        menuMain.findItem(R.id.nav_terms).setOnMenuItemClickListener {
+            val intent = Intent(this@MainActivity, Terms::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+            finish()
+            true
+        }
+
+        menuMain.findItem(R.id.nav_about).setOnMenuItemClickListener {
+            val intent = Intent(this@MainActivity, AboutUs::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+            finish()
+            true
+        }
+
+        menuMain.findItem(R.id.nav_updates).setOnMenuItemClickListener {
+            val intent = Intent(this@MainActivity, CheckUpdates::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
             finish()

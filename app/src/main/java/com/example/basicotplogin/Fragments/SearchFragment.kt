@@ -106,7 +106,7 @@ class SearchFragment : Fragment() {
             .startAt(str)
             .endAt(str + "\uf8ff")
 
-        queryUsers.addValueEventListener(object : ValueEventListener{
+        queryUsers.addListenerForSingleValueEvent(object : ValueEventListener{
             override fun onDataChange(p0: DataSnapshot) {
                 (mUsers as ArrayList<Users>).clear()
 
@@ -120,8 +120,11 @@ class SearchFragment : Fragment() {
 
                 }
 
-                userAdapter = UserAdapter(context!!, mUsers!!, false)
-                recylerView!!.adapter = userAdapter
+                try {
+                    userAdapter = UserAdapter(context!!, mUsers!!, false)
+                    recylerView!!.adapter = userAdapter
+                }
+                catch(e: Exception){}
 
 
             }
