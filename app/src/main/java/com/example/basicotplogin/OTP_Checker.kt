@@ -2,9 +2,11 @@ package com.example.basicotplogin
 
 import android.content.ComponentCallbacks
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.google.android.gms.tasks.TaskExecutors
@@ -31,6 +33,7 @@ class OTP_Checker : AppCompatActivity() {
     private var address_check: Boolean = false
     private lateinit var refUsers: DatabaseReference
     private var firebaseUserID: String = ""
+    private var gotBanned: Boolean = false
 
 
 
@@ -124,7 +127,24 @@ class OTP_Checker : AppCompatActivity() {
     }
 
     private fun getUserRegistered() {
-        if(username_check==true && address_check==true) {
+        var refBan = FirebaseDatabase.getInstance().reference.child("Banned")
+        refBan.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {}
+
+            @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+            override fun onDataChange(p0: DataSnapshot) {
+                for (element in p0.children){
+                    if(element.key.toString().equals(Contact_no.toString())){
+                        gotBanned = true
+                        Toast.makeText(this@OTP_Checker, "You have got banned from Admin, Please contact Admin", Toast.LENGTH_LONG).show()
+                        FirebaseAuth.getInstance().signOut()
+                        finishAndRemoveTask();
+                    }
+                }
+            }
+        })
+
+        if(username_check==true && address_check==true && gotBanned==false) {
 
             firebaseUserID = firebaseAuth.currentUser!!.uid
 
@@ -161,39 +181,41 @@ class OTP_Checker : AppCompatActivity() {
             userHashMapBroadcast["id"] = firebaseUserID
             refBroadCast.updateChildren(userHashMapBroadcast)
         }
-        else{
+        else {
+            if (gotBanned == false) {
 
-            firebaseUserID = firebaseAuth.currentUser!!.uid
-            refUsers = FirebaseDatabase.getInstance().reference.child("Users").child(firebaseUserID)
+                firebaseUserID = firebaseAuth.currentUser!!.uid
+                refUsers =
+                    FirebaseDatabase.getInstance().reference.child("Users").child(firebaseUserID)
 
-            refUsers!!.addValueEventListener( object : ValueEventListener {
-                override fun onDataChange(p0: DataSnapshot) {
-                    if(p0.exists()){
-                        val intent =  Intent(this@OTP_Checker, MainActivity::class.java)
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                        startActivity(intent)
-                        finish()
+                refUsers!!.addValueEventListener(object : ValueEventListener {
+                    override fun onDataChange(p0: DataSnapshot) {
+                        if (p0.exists()) {
+                            val intent = Intent(this@OTP_Checker, MainActivity::class.java)
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                            startActivity(intent)
+                            finish()
+                        } else {
+                            Toast.makeText(
+                                this@OTP_Checker,
+                                "You are not registered!! Please Register",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            FirebaseAuth.getInstance().signOut()
+                            val intent = Intent(this@OTP_Checker, RegisterActivity::class.java)
+                            startActivity(intent)
+                            finish()
+
+                        }
                     }
-                    else{
-                        Toast.makeText(this@OTP_Checker, "You are not registered!! Please Register", Toast.LENGTH_LONG).show()
-                        FirebaseAuth.getInstance().signOut()
-                        val intent =  Intent(this@OTP_Checker, RegisterActivity::class.java)
-                        startActivity(intent)
-                        finish()
 
+                    override fun onCancelled(p0: DatabaseError) {
+                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
                     }
-                }
+                })
 
-                override fun onCancelled(p0: DatabaseError) {
-                    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                }
-            })
-
+            }
         }
-
-        /*val intent =  Intent(this@OTP_Checker, MainActivity::class.java)
-        startActivity(intent)
-        finish()*/
     }
 
     private fun Send_OTP() {

@@ -18,12 +18,14 @@ import com.example.basicotplogin.MessageChatActivity
 import com.squareup.picasso.Picasso
 import com.example.basicotplogin.ModelClasses.Users
 import com.example.basicotplogin.R
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_settings.*
 
 class UserAdapter (mContext: Context,
                    mUsers: List<Users>,
@@ -84,6 +86,10 @@ class UserAdapter (mContext: Context,
                             }
                             override fun onCancelled(p0: DatabaseError){}
                         })
+                        val mapUsername = HashMap<String, Any>()
+                        mapUsername["phone"] = user.getPhone().toString()
+                        mapUsername["id"] = user.getUID().toString()
+                        FirebaseDatabase.getInstance().reference.child("Banned").child(user.getPhone().toString()).updateChildren(mapUsername)
                     }
                     if (position == 1) {
                         return@OnClickListener
