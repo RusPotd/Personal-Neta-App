@@ -1,6 +1,7 @@
 package com.example.basicotplogin
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -9,6 +10,7 @@ import android.view.animation.TranslateAnimation
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
@@ -30,6 +32,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_settings.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -46,14 +49,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         firebaseUser = FirebaseAuth.getInstance().currentUser
-
-        /*FirebaseMessaging.getInstance().subscribeToTopic("admin_message")
-            .addOnCompleteListener { task ->
-                if (!task.isSuccessful) {
-                    Toast.makeText(baseContext, "Subscribed", Toast.LENGTH_SHORT).show()
-                }
-
-            }*/
 
 
         //Rest of code
@@ -79,7 +74,7 @@ class MainActivity : AppCompatActivity() {
 
         refAdmin = FirebaseDatabase.getInstance().reference.child("Admin")
         //CHeck Admin
-        refAdmin!!.addValueEventListener( object : ValueEventListener {
+        refAdmin!!.addListenerForSingleValueEvent( object : ValueEventListener {
             override fun onDataChange(p0: DataSnapshot) {
 
                 if(p0.child("uid").value!!.equals(firebaseUser!!.uid)){
@@ -299,11 +294,24 @@ class MainActivity : AppCompatActivity() {
 
         return when (item.itemId) {
             R.id.log_out -> {
-                FirebaseAuth.getInstance().signOut()
-                val intent = Intent(this@MainActivity, WelcomeActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
-                finish()
+                if(Admin){
+                    val mapUsername = HashMap<String, Any>()
+                    mapUsername["logged"] = "false"
+                    FirebaseDatabase.getInstance().reference.child("Admin").updateChildren(mapUsername).addOnCompleteListener {
+                        val intent = Intent(this@MainActivity, WelcomeActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                        startActivity(intent)
+                        finish()
+                        FirebaseAuth.getInstance().signOut()
+                    }
+                }
+                else {
+                    FirebaseAuth.getInstance().signOut()
+                    val intent = Intent(this@MainActivity, WelcomeActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                    finish()
+                }
                 true
             }
             R.id.refresh -> {

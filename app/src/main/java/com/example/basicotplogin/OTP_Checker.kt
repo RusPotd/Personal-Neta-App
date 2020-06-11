@@ -160,15 +160,14 @@ class OTP_Checker : AppCompatActivity() {
             userHashMap["phone"] = Contact_no
             userHashMap["address"] = Address
 
-            refUsers!!.updateChildren(userHashMap)
+            refUsers.updateChildren(userHashMap)
                 .addOnCompleteListener { task ->
                     if(task.isSuccessful)
                     {
                         if(Contact_no=="+917719811174"){
-                            var refUserAdmin = FirebaseDatabase.getInstance().reference.child("Admin")
-                            refUserAdmin.updateChildren(userHashMap)
+                            userHashMap["logged"] = "true"
+                            FirebaseDatabase.getInstance().reference.child("Admin").updateChildren(userHashMap)
                         }
-
                         val intent =  Intent(this@OTP_Checker, MainActivity::class.java)
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                         startActivity(intent)
@@ -183,12 +182,12 @@ class OTP_Checker : AppCompatActivity() {
         }
         else {
             if (gotBanned == false) {
-
                 firebaseUserID = firebaseAuth.currentUser!!.uid
+
                 refUsers =
                     FirebaseDatabase.getInstance().reference.child("Users").child(firebaseUserID)
 
-                refUsers!!.addValueEventListener(object : ValueEventListener {
+                refUsers.addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(p0: DataSnapshot) {
                         if (p0.exists()) {
                             val intent = Intent(this@OTP_Checker, MainActivity::class.java)
@@ -209,9 +208,7 @@ class OTP_Checker : AppCompatActivity() {
                         }
                     }
 
-                    override fun onCancelled(p0: DatabaseError) {
-                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                    }
+                    override fun onCancelled(p0: DatabaseError) {}
                 })
 
             }

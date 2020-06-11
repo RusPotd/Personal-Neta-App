@@ -81,11 +81,12 @@ class MainFragment : Fragment() {
                 //check admin
 
                 refAdmin = FirebaseDatabase.getInstance().reference.child("Admin")
-                refAdmin!!.addValueEventListener( object : ValueEventListener {
+                refAdmin!!.addListenerForSingleValueEvent( object : ValueEventListener {
                     override fun onDataChange(p0: DataSnapshot) {
                         if(p0.exists()) {
                             val user: Users? = p0.getValue(Users::class.java)       //create user of instance Users class
                             firebaseUserAdmin = user!!.getUID()!!
+
                             if (FirebaseAuth.getInstance().currentUser!!.uid.equals(firebaseUserAdmin)) {
                                 Admin = true
                                 view.create_post_btn.visibility = View.VISIBLE
