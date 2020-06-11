@@ -1,36 +1,30 @@
 package com.example.basicotplogin.MainFragments
 
-import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.basicotplogin.AdapterClasses.ChatHistAdapter
 import com.example.basicotplogin.AdapterClasses.PostAdapter
+import com.example.basicotplogin.ComparatorClass
 import com.example.basicotplogin.CreatePost
-import com.example.basicotplogin.MainActivity
 import com.example.basicotplogin.MessageChatActivity
-import com.example.basicotplogin.ModelClasses.ChatHist
 import com.example.basicotplogin.ModelClasses.EditBroadCast
 import com.example.basicotplogin.ModelClasses.Posts
 import com.example.basicotplogin.ModelClasses.Users
 import com.example.basicotplogin.R
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
-import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.fragment_main.view.*
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 
 class MainFragment : Fragment() {
@@ -147,7 +141,11 @@ class MainFragment : Fragment() {
                         }
                     }
                     try {
-                        userAdapter = PostAdapter(view!!.context, mUserChats!!, Admin)
+                        //Compare with respect to date of upload
+                        var MUserChats : MutableList<Posts> = ArrayList(mUserChats!!)
+                        Collections.sort(MUserChats, ComparatorClass())
+
+                        userAdapter = PostAdapter(view!!.context, MUserChats, Admin)
                         recylerView!!.smoothScrollToPosition(userAdapter!!.itemCount);
                         recylerView!!.isNestedScrollingEnabled = false
                         recylerView!!.adapter = userAdapter
@@ -194,7 +192,10 @@ class MainFragment : Fragment() {
 
                     }
                     try {
-                        userAdapter = PostAdapter(view!!.context, mUserChats!!, Admin)
+                        var MUserChats : MutableList<Posts> = ArrayList(mUserChats!!)
+                        Collections.sort(MUserChats, ComparatorClass())
+
+                        userAdapter = PostAdapter(view!!.context, MUserChats, Admin)
                         recylerView!!.smoothScrollToPosition(userAdapter!!.itemCount);
                         recylerView!!.isNestedScrollingEnabled = false
                         recylerView!!.adapter = userAdapter

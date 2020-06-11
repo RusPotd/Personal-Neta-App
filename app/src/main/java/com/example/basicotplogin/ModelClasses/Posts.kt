@@ -1,5 +1,7 @@
 package com.example.basicotplogin.ModelClasses
 
+import java.util.*
+
 class Posts {
     private var  data : String = ""
     private var  senderId : String = ""
@@ -8,6 +10,7 @@ class Posts {
     private var senderImage: String = ""
     private var senderName: String = ""
     private var postId: String = ""
+    private var time: Date? = null
 
     constructor()
 
@@ -19,6 +22,7 @@ class Posts {
         this.senderImage = senderImage
         this.senderName = senderName
         this.postId = postId
+        this.time = time
     }
 
     fun getData(): String?{
@@ -77,5 +81,12 @@ class Posts {
         this.postId = postId
     }
 
+    fun getTime(): Date?{
+        return time
+    }
+
+    fun setTime(time: Date){
+        this.time = time
+    }
 
 }

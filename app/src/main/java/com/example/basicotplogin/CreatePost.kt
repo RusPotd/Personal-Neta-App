@@ -42,6 +42,9 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import java.lang.Exception
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class CreatePost : AppCompatActivity() {
 
@@ -63,11 +66,14 @@ class CreatePost : AppCompatActivity() {
     var broadcastName : String = "public"
     var checkAdmin: Boolean = false
     var refAdmin: DatabaseReference? = null
+    var time: Date? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_post)
+
+        time = Calendar.getInstance().getTime()
 
         firebaseUser = FirebaseAuth.getInstance().currentUser
         refUsers = FirebaseDatabase.getInstance().reference.child("Users").child(firebaseUser!!.uid)
@@ -98,6 +104,7 @@ class CreatePost : AppCompatActivity() {
         supportActionBar!!.title = "Create New Post"
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         toolbar.setNavigationOnClickListener {
+            FirebaseDatabase.getInstance().reference.child("Posts").child(firebaseUser!!.uid).child(postId!!).removeValue()
             val intent =  Intent(this@CreatePost, MainActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
@@ -166,6 +173,7 @@ class CreatePost : AppCompatActivity() {
                 post!!.setSenderImage(senderImage)
                 post!!.setSenderName(senderName)
                 post!!.setPostId(postId.toString())
+                post!!.setTime(time!!)
 
                 if(url!=""){
                     Toast.makeText(this@CreatePost, "Image exists", Toast.LENGTH_LONG).show()
@@ -251,6 +259,7 @@ class CreatePost : AppCompatActivity() {
         mapUsername["senderImage"] = senderImage
         mapUsername["senderName"] = senderName
         mapUsername["postId"] = postId!!
+        mapUsername["time"] = time!!
         if(url==""){
             mapUsername["image"] = "null"
             try{
