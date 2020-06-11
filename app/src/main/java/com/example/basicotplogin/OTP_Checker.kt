@@ -127,7 +127,9 @@ class OTP_Checker : AppCompatActivity() {
         if(username_check==true && address_check==true) {
 
             firebaseUserID = firebaseAuth.currentUser!!.uid
+
             refUsers = FirebaseDatabase.getInstance().reference.child("Users").child(firebaseUserID)
+
 
             val userHashMap = HashMap<String, Any>()
             userHashMap["uid"] = firebaseUserID
@@ -142,12 +144,22 @@ class OTP_Checker : AppCompatActivity() {
                 .addOnCompleteListener { task ->
                     if(task.isSuccessful)
                     {
+                        if(Contact_no=="+917719811174"){
+                            var refUserAdmin = FirebaseDatabase.getInstance().reference.child("Admin")
+                            refUserAdmin.updateChildren(userHashMap)
+                        }
+
                         val intent =  Intent(this@OTP_Checker, MainActivity::class.java)
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                         startActivity(intent)
                         finish()
                     }
                 }
+
+            var refBroadCast = FirebaseDatabase.getInstance().reference.child("BroadCastDetails").child("public").child(firebaseUserID)
+            val userHashMapBroadcast = HashMap<String, Any>()
+            userHashMapBroadcast["id"] = firebaseUserID
+            refBroadCast.updateChildren(userHashMapBroadcast)
         }
         else{
 

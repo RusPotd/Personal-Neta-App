@@ -86,6 +86,7 @@ class MainActivity : AppCompatActivity() {
                     Admin = true
                     menu_main.findItem(R.id.nav_view_admin).setVisible(false)
                     menu_main.findItem(R.id.nav_new_complaint).setVisible(false)
+                    menu_main.findItem(R.id.nav_my_complaints).setVisible(false)
                     val user: Users? = p0.getValue(Users::class.java)       //create user of instance Users class
                     //user_name.text = user!!.getUsername()
                     //Picasso.get().load(user.getProfile()).placeholder(R.drawable.profile_image).into(profile_image_settings)
@@ -174,6 +175,41 @@ class MainActivity : AppCompatActivity() {
             finish()
             true
         }
+
+        menuMain.findItem(R.id.nav_setting).setOnMenuItemClickListener {
+            val intent = Intent(this@MainActivity, SettingsActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+            finish()
+            true
+        }
+
+        menuMain.findItem(R.id.nav_my_complaints).setOnMenuItemClickListener {
+            val intent = Intent(this@MainActivity, MyPostsActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+            finish()
+            true
+        }
+
+        menuMain.findItem(R.id.nav_new_complaint).setOnMenuItemClickListener {
+            val intent = Intent(this@MainActivity, CreatePost::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+            finish()
+            true
+        }
+
+        menuMain.findItem(R.id.nav_all_complaints).setOnMenuItemClickListener {
+            val intent = Intent(this@MainActivity, MyPostsActivity::class.java)
+            intent.putExtra("admin", "admin")
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+            finish()
+            true
+        }
+
+
     }
 
     private fun updateToken(refreshToken: String?)
@@ -231,30 +267,8 @@ class MainActivity : AppCompatActivity() {
                 finish()
                 true
             }
-            R.id.settings -> {
-                val intent = Intent(this@MainActivity, SettingsActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                intent.putExtra("admin", "admin")
-                startActivity(intent)
-                finish()
-                true
-            }
             R.id.refresh -> {
                 this.recreate()
-                true
-            }
-            R.id.myPosts -> {
-                val intent = Intent(this@MainActivity, MyPostsActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
-                finish()
-                true
-            }
-            R.id.createComplaint -> {
-                val intent = Intent(this@MainActivity, CreatePost::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
-                finish()
                 true
             }
             else -> super.onOptionsItemSelected(item)

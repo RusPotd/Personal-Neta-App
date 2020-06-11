@@ -16,7 +16,7 @@ import com.google.firebase.database.*
 import java.util.*
 import kotlin.collections.ArrayList
 
-class MyPostsActivity : AppCompatActivity() {
+class ViewAllComplaints : AppCompatActivity() {
 
     private var mUserChats: List<Posts>? = null
     private var userAdapter: PostAdapter? = null
@@ -26,7 +26,7 @@ class MyPostsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.my_posts_layout)
+        setContentView(R.layout.activity_view_all_complaints)
 
         mUserChats = ArrayList()
 
@@ -41,7 +41,7 @@ class MyPostsActivity : AppCompatActivity() {
         supportActionBar!!.title = "My Posts"
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         toolbar.setNavigationOnClickListener {
-            val intent =  Intent(this@MyPostsActivity, MainActivity::class.java)
+            val intent =  Intent(this@ViewAllComplaints, MainActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
             finish()

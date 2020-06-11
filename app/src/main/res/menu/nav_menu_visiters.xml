@@ -5,20 +5,6 @@
         android:title="Refresh" />
 
     <item
-        android:id="@+id/createComplaint"
-        android:title="New Complaint"
-        />
-
-    <item
-        android:id="@+id/myPosts"
-        android:title="My Complaints"
-        />
-
-    <item
-        android:id="@+id/settings"
-        android:title="Settings" />
-
-    <item
         android:id="@+id/log_out"
         android:title="Log Out" />
 </menu>

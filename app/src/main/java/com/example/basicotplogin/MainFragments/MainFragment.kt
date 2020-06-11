@@ -47,12 +47,6 @@ class MainFragment : Fragment() {
         // Inflate the layout for this fragment
         val view: View = inflater.inflate(R.layout.fragment_main, container, false)
 
-        view.create_post_btn.setOnClickListener {
-            val intent =  Intent(context, CreatePost::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
-        }
-
         recylerView = view.findViewById(R.id.recycler_view_post)
         recylerView!!.setHasFixedSize(true)
         val linearLayoutManager = LinearLayoutManager(view.context)
@@ -75,6 +69,14 @@ class MainFragment : Fragment() {
                 }
 
                 Log.i("\n\n\nList : ", my_dict.toString())
+
+                view.create_post_btn.setOnClickListener {
+                    val intent =  Intent(context, CreatePost::class.java)
+                    intent.putExtra("dict", my_dict)
+                    Log.i("Dictionary Send", "success ")
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                }
 
                 //check admin
 
@@ -116,9 +118,6 @@ class MainFragment : Fragment() {
                 //
             }
         })
-
-
-
 
         return view
     }

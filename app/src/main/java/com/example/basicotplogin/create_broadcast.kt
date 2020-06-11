@@ -70,9 +70,12 @@ class create_broadcast : AppCompatActivity() {
             retrieveAllUsers(broadCastName)
 
             post_broadcast_btn.setOnClickListener{
-                val mapUsername = HashMap<String, Any>()
+                var mapUsername = HashMap<String, Any>()
                 mapUsername["name"] = broadCastName
                 FirebaseDatabase.getInstance().reference.child("Broadcasts").child(broadCastName).updateChildren(mapUsername)
+                mapUsername = HashMap<String, Any>()
+                mapUsername["id"] = FirebaseAuth.getInstance().currentUser!!.uid
+                FirebaseDatabase.getInstance().reference.child("BroadCastDetails").child(broadCastName).child(FirebaseAuth.getInstance().currentUser!!.uid).updateChildren(mapUsername)
                 val intent =  Intent(this@create_broadcast, all_broadcast::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)

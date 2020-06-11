@@ -29,6 +29,10 @@
             android:icon="@drawable/new_file"
             android:title="New Complaint" />
         <item
+            android:id="@+id/nav_my_complaints"
+            android:icon="@drawable/inbox"
+            android:title="My Complaints" />
+        <item
             android:id="@+id/nav_setting"
             android:icon="@drawable/settings"
             android:title="Settings" />

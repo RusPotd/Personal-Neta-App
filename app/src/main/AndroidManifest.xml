@@ -11,7 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".create_broadcast"></activity>
+        <activity android:name=".ViewAllComplaints"></activity>
+        <activity android:name=".create_broadcast" />
         <activity android:name=".Edit_BroadCast" />
         <activity android:name=".all_broadcast" />
         <activity android:name=".PostMsgChatActivity" />

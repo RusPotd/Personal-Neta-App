@@ -67,13 +67,7 @@ class SettingsActivity : AppCompatActivity() {
                     checkAdmin = true
                 }
 
-                if(checkAdmin){
-
-                    refUsers = FirebaseDatabase.getInstance().reference.child("Admin")
-                }
-                else{
-                    refUsers = FirebaseDatabase.getInstance().reference.child("Users").child(firebaseUser!!.uid)
-                }
+                refUsers = FirebaseDatabase.getInstance().reference.child("Users").child(firebaseUser!!.uid)
 
                 storageRef = FirebaseStorage.getInstance().reference.child("User Images")
 
@@ -106,6 +100,9 @@ class SettingsActivity : AppCompatActivity() {
             mapUsername["address"] = enteredAddress.text.toString()
             mapUsername["search"] = enteredUsername.text.toString().toLowerCase()
             refUsers!!.updateChildren(mapUsername)
+            if(checkAdmin){
+                refAdmin!!.updateChildren(mapUsername)
+            }
             Toast.makeText(this@SettingsActivity, "Changes Saved", Toast.LENGTH_LONG).show()
 
         }
@@ -159,6 +156,10 @@ class SettingsActivity : AppCompatActivity() {
                     val mapProfileImg = HashMap<String, Any>()
                     mapProfileImg["profile"] = url
                     refUsers!!.updateChildren(mapProfileImg)
+
+                    if(checkAdmin){
+                        refAdmin!!.updateChildren(mapProfileImg)
+                    }
 
                     progressBar.dismiss()
 

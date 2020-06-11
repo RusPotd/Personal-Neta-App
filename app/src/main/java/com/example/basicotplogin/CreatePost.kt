@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Intent
 import android.net.Uri
+import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -20,6 +21,7 @@ import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.example.basicotplogin.Fragments.APIService
 import com.example.basicotplogin.ModelClasses.BroadCast
+import com.example.basicotplogin.ModelClasses.EditBroadCast
 import com.example.basicotplogin.ModelClasses.Posts
 import com.example.basicotplogin.ModelClasses.Users
 import com.example.basicotplogin.Notifications.*
@@ -61,17 +63,31 @@ class CreatePost : AppCompatActivity() {
     var senderImage: String = ""
     var senderName: String = ""
     var apiService: APIService? = null
-    var userIdVisit: String = "y33x7HMMKMRIIJn4XTI5YH1Xzv12"
+    var userIdVisit: String = "y33x7HMMKMRIIJn4XTI5YH1Xzv12" //"y33x7HMMKMRIIJn4XTI5YH1Xzv12"    //must change to every individual in users of perticular id
     var broadCastUsers: ArrayList<String> = ArrayList()
     var broadcastName : String = "public"
     var checkAdmin: Boolean = false
     var refAdmin: DatabaseReference? = null
     var time: Date? = null
+    var refAllUsers: DatabaseReference? = null
+    //var AllUsers: ArrayList<String>? = null
+    var my_dict: HashMap<String, ArrayList<String>>? = null
+    var gotList: Boolean = false
+    var AdminUID: String = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_post)
+
+        if(intent.hasExtra("dict")){
+            my_dict = (intent.getSerializableExtra("dict") as HashMap<String, ArrayList<String>>)
+            gotList = true
+            Log.i("Archieved list ", "${my_dict.toString()}")
+        }
+        else{
+            Log.i("No list ", "No list")
+        }
 
         time = Calendar.getInstance().getTime()
 
@@ -86,6 +102,7 @@ class CreatePost : AppCompatActivity() {
 
         refAdmin!!.addValueEventListener( object : ValueEventListener {
             override fun onDataChange(p0: DataSnapshot) {
+                AdminUID = p0.child("uid").value.toString()
                 if (p0.child("uid").value!!.equals(firebaseUser!!.uid)) {
                     checkAdmin = true
                 }
@@ -93,7 +110,6 @@ class CreatePost : AppCompatActivity() {
                     spinner_group.visibility = View.GONE
                 }
             }
-
             override fun onCancelled(p0: DatabaseError) {}
         })
 
@@ -199,58 +215,6 @@ class CreatePost : AppCompatActivity() {
 
     }
 
-    private fun sendNotification(receiverId: String, username: String?, msg: String) {
-        val ref = FirebaseDatabase.getInstance().reference.child("Tokens")
-        val query = ref.orderByKey().equalTo(receiverId)
-
-        query.addValueEventListener(object : ValueEventListener{
-            override fun onDataChange(p0: DataSnapshot) {
-                for (dataSnapshot in p0.children)
-                {
-                    val token: Token? = dataSnapshot.getValue(Token::class.java)
-                    val data = Data(
-                        firebaseUser!!.uid,
-                        R.mipmap.ic_launcher,
-                        "$username: $msg",
-                        "New_Post",
-                        userIdVisit
-                    )
-
-                    val sender = Sender(data, token!!.getToken().toString())
-
-                    apiService!!.sendNotification(sender)
-                        .enqueue(object  : Callback<MyResponse> {
-                            override fun onResponse(
-                                call: Call<MyResponse>,
-                                response: retrofit2.Response<MyResponse>
-                            ) {
-                                if(response.code() == 200){
-                                    if(response.body()!!.success != 1){
-                                        Toast.makeText(this@CreatePost, "Failed, Nothing Happended", Toast.LENGTH_LONG).show()
-                                    }
-                                    else
-                                    {
-
-                                    }
-                                }
-                                else{
-
-                                }
-                            }
-
-                            override fun onFailure(call: Call<MyResponse>, t: Throwable) {
-                                Toast.makeText(this@CreatePost, "Failed to push notification", Toast.LENGTH_LONG).show()
-                            }
-                        })
-                }
-            }
-
-            override fun onCancelled(p0: DatabaseError) {
-
-            }
-        })
-    }
-
     private fun sendPost() {
         val mapUsername = HashMap<String, Any>()
         mapUsername["data"] = post_data.text.toString()
@@ -269,15 +233,31 @@ class CreatePost : AppCompatActivity() {
         }
 
 
-        refPosts!!.child("Posts").child(firebaseUser!!.uid).child(postId!!).updateChildren(mapUsername)
-        Toast.makeText(this@CreatePost, "Post Published", Toast.LENGTH_LONG).show()
-
-        sendNotification(userIdVisit, senderName, "Uploaded New Post")
-
-        val intent =  Intent(this@CreatePost, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-        startActivity(intent)
-        finish()
+        refPosts!!.child("Posts").child(firebaseUser!!.uid).child(postId!!).updateChildren(mapUsername).addOnCompleteListener {
+            Toast.makeText(this@CreatePost, "Post Published", Toast.LENGTH_LONG).show()
+            /*if(checkAdmin){
+                if(gotList){
+                    var AllUsers = my_dict!![broadcastName]
+                    Log.i("\n\n\nAllUsers : ", "$AllUsers\n\n\n")
+                    for (MainItem in AllUsers!!){
+                        for(Item in MainItem) {
+                            sendNotification(Item.toString(), senderName, "Uploaded New Post")
+                        }
+                    }
+                }
+                else {
+                    var AllUsers = my_dict!![broadcastName]
+                    Log.i("\n\n\nAllUsers : ", "Not found\n\n\n")
+                }
+            }
+            else{
+                sendNotification(AdminUID, senderName, "Uploaded New Post")
+            }*/
+            val intent =  Intent(this@CreatePost, MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+            finish()
+        }
     }
 
 
@@ -334,5 +314,72 @@ class CreatePost : AppCompatActivity() {
             }
         }
 
+    }
+
+    private fun sendNotification(receiverId: String, username: String?, msg: String) {
+        val ref = FirebaseDatabase.getInstance().reference.child("Tokens")
+        val query = ref.orderByKey().equalTo(receiverId)
+
+        query.addValueEventListener(object : ValueEventListener{
+            override fun onDataChange(p0: DataSnapshot) {
+                for (dataSnapshot in p0.children)
+                {
+                    val token: Token? = dataSnapshot.getValue(Token::class.java)
+                    val data = Data(
+                        firebaseUser!!.uid,
+                        R.mipmap.ic_launcher,
+                        "$username: $msg",
+                        "New_Post",
+                        userIdVisit
+                    )
+
+                    val sender = Sender(data, token!!.getToken().toString())
+
+                    apiService!!.sendNotification(sender)
+                        .enqueue(object  : Callback<MyResponse> {
+                            override fun onResponse(
+                                call: Call<MyResponse>,
+                                response: retrofit2.Response<MyResponse>
+                            ) {
+                                if(response.code() == 200){
+                                    if(response.body()!!.success != 1){
+                                        Toast.makeText(this@CreatePost, "Failed, Nothing Happended", Toast.LENGTH_LONG).show()
+                                    }
+                                    else
+                                    {
+                                        //
+                                    }
+                                }
+                                else{
+                                    //
+                                }
+                            }
+
+                            override fun onFailure(call: Call<MyResponse>, t: Throwable) {
+                                Toast.makeText(this@CreatePost, "Failed to push notification", Toast.LENGTH_LONG).show()
+                            }
+                        })
+                }
+            }
+
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+        })
+    }
+
+    internal inner class CallNotify : AsyncTask<String, Void, String>(){
+
+        override fun doInBackground(vararg AllUsers: String?): String {
+            for (Item in AllUsers) {
+                Log.i("Sending Notification", " to : $Item")
+
+            }
+            return ""
+        }
+
+        override fun onPostExecute(result: String?) {
+            super.onPostExecute(result)
+        }
     }
 }
