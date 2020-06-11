@@ -10,7 +10,7 @@
         android:id="@+id/profileimage_search"
         android:layout_width="55dp"
         android:layout_height="55dp"
-        android:layout_marginLeft="70dp"
+        android:layout_marginLeft="55dp"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:src="@drawable/ic_profile"
@@ -22,7 +22,7 @@
         android:id="@+id/username_search"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="135dp"
+        android:layout_marginLeft="120dp"
         android:layout_marginTop="10dp"
         android:text="UserName"
         android:textSize="20sp">
@@ -33,13 +33,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/username_search"
-        android:layout_marginLeft="135dp"
+        android:layout_marginLeft="120dp"
         android:layout_marginTop="13dp"
         android:textSize="8sp"
         android:text="Last Message"
-        >
+        />
 
-    </TextView>
+    <ImageView
+        android:id="@+id/delete_user_btn"
+        android:layout_width="35dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="17dp"
+        android:layout_marginRight="70dp"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/delete"
+        android:visibility="gone"
+        />
 
 
 </RelativeLayout>

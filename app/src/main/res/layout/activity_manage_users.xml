@@ -14,4 +14,24 @@
         android:gravity="center_horizontal"
         />
 
+    <EditText
+        android:id="@+id/searchUserET"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/manage_users_toolbar"
+        android:hint="Search Users"
+        android:textSize="18sp"
+        android:gravity="center"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/searchList"
+        android:layout_marginTop="30dp"
+        android:layout_below="@+id/searchUserET"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        >
+
+    </androidx.recyclerview.widget.RecyclerView>
+
 </RelativeLayout>

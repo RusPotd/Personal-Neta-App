@@ -81,7 +81,7 @@ class SearchFragment : Fragment() {
 
                     }
                     try {
-                        userAdapter = UserAdapter(context!!, mUsers!!, false)
+                        userAdapter = UserAdapter(context!!, mUsers!!, false, false)
                         recylerView!!.adapter = userAdapter
                     }
                     catch (e: Exception) {
@@ -121,7 +121,7 @@ class SearchFragment : Fragment() {
                 }
 
                 try {
-                    userAdapter = UserAdapter(context!!, mUsers!!, false)
+                    userAdapter = UserAdapter(context!!, mUsers!!, false, false)
                     recylerView!!.adapter = userAdapter
                 }
                 catch(e: Exception){}
