@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_manage_users"
+            android:icon="@drawable/users"
+            android:title="Manage Users" />
+        <item
+            android:id="@+id/nav_all_complaints"
+            android:icon="@drawable/inbox"
+            android:title="Registered Complaints" />
+        <item
+            android:id="@+id/nav_create_group"
+            android:icon="@drawable/new_group"
+            android:title="New Broadcast" />
+        <item
+            android:id="@+id/nav_manage_group"
+            android:icon="@drawable/manage_group"
+            android:title="All Broadcasts" />
+        <item
+            android:id="@+id/nav_view_admin"
+            android:icon="@drawable/view_admin"
+            android:title="View Admin Info" />
+        <item
+            android:id="@+id/nav_new_complaint"
+            android:icon="@drawable/new_file"
+            android:title="New Complaint" />
+        <item
+            android:id="@+id/nav_setting"
+            android:icon="@drawable/settings"
+            android:title="Settings" />
+        <item
+            android:id="@+id/nav_feedback"
+            android:icon="@drawable/feedback_icon"
+            android:title="Feedback" />
+        <item
+            android:id="@+id/nav_share"
+            android:icon="@drawable/share"
+            android:title="Share this App" />
+        <item
+            android:id="@+id/nav_terms"
+            android:icon="@drawable/terms"
+            android:title="Terms and Conditions" />
+        <item
+            android:id="@+id/nav_about"
+            android:icon="@drawable/about"
+            android:title="About Us" />
+        <item
+            android:id="@+id/nav_updates"
+            android:icon="@drawable/update"
+            android:title="Check Updates" />
+
+    </group>
+</menu>

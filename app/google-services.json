@@ -1,0 +1,122 @@
+{
+  "project_info": {
+    "project_number": "816232775998",
+    "firebase_url": "https://kaiseho-5e57c.firebaseio.com",
+    "project_id": "kaiseho-5e57c",
+    "storage_bucket": "kaiseho-5e57c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:816232775998:android:4d23c1596af4e461202c6f",
+        "android_client_info": {
+          "package_name": "com.example.basicotplogin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "816232775998-arcpuaekcq6b02ugdvd7jomqg6atuseb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.basicotplogin",
+            "certificate_hash": "cff5c8a9d39c7824708b362f38c62893900203a4"
+          }
+        },
+        {
+          "client_id": "816232775998-v83jkso52bthnc9tbk3iddgp8cn00696.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAUAHyP2t37Fe5ALFEOqbzqjRvm8H0si0c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "816232775998-v83jkso52bthnc9tbk3iddgp8cn00696.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:816232775998:android:1169d299753b4167202c6f",
+        "android_client_info": {
+          "package_name": "com.example.samajchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "816232775998-pc82m2gq1kbspkmt10iuqdoeelkcm3ik.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.samajchat",
+            "certificate_hash": "cff5c8a9d39c7824708b362f38c62893900203a4"
+          }
+        },
+        {
+          "client_id": "816232775998-v83jkso52bthnc9tbk3iddgp8cn00696.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAUAHyP2t37Fe5ALFEOqbzqjRvm8H0si0c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "816232775998-v83jkso52bthnc9tbk3iddgp8cn00696.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:816232775998:android:5034dce87e3a5473202c6f",
+        "android_client_info": {
+          "package_name": "com.team.kaiseho"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "816232775998-6a3ed15e4tclfdusdhjhtc0fuhhob3vs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.team.kaiseho",
+            "certificate_hash": "cff5c8a9d39c7824708b362f38c62893900203a4"
+          }
+        },
+        {
+          "client_id": "816232775998-v83jkso52bthnc9tbk3iddgp8cn00696.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAUAHyP2t37Fe5ALFEOqbzqjRvm8H0si0c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "816232775998-v83jkso52bthnc9tbk3iddgp8cn00696.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

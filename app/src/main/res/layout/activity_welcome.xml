@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".WelcomeActivity">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="216dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="96dp"
+        android:layout_marginTop="72dp"
+        android:text="Welcome"
+        android:textSize="50sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginLeft="96dp" />
+
+    <Button
+        android:id="@+id/login_welcome_btn"
+        android:layout_width="158dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="124dp"
+        android:layout_marginLeft="124dp"
+        android:layout_marginTop="92dp"
+        android:text="Login"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <Button
+        android:id="@+id/Register_welcome_btn"
+        android:layout_width="161dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="124dp"
+        android:layout_marginTop="92dp"
+        android:text="Register"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/login_welcome_btn"
+        android:layout_marginLeft="124dp" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="15dp"
+        android:layout_height="21dp"
+        android:layout_marginStart="196dp"
+        android:text="or"
+        app:layout_constraintBottom_toTopOf="@+id/Register_welcome_btn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/login_welcome_btn"
+        app:layout_constraintVertical_bias="0.625"
+        android:layout_marginLeft="196dp" />
+
+    <TextView
+        android:id="@+id/adminLogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="112dp"
+        android:gravity="center"
+        android:text="Login as Admin"
+        android:textColor="#334DDF"
+        android:textSize="21sp"
+        app:layout_constraintTop_toBottomOf="@+id/Register_welcome_btn"
+        tools:layout_editor_absoluteX="0dp">
+
+    </TextView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
