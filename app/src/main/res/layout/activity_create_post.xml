@@ -64,11 +64,12 @@
 
         <Spinner
             android:id="@+id/spinner_group"
-            android:layout_width="150dp"
+            android:layout_width="170dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
             android:layout_weight="1"
-            android:layout_marginTop="9dp"
             android:layout_below="@id/user_name_post"
+
             />
 
         </RelativeLayout>
@@ -79,7 +80,7 @@
         android:id="@+id/post_data"
         android:layout_marginLeft="25dp"
         android:layout_below="@id/userBar"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Write Something...?"

@@ -103,6 +103,7 @@ class MainActivity : AppCompatActivity() {
                     menu_main.findItem(R.id.nav_all_complaints).setVisible(false)
                     menu_main.findItem(R.id.nav_create_group).setVisible(false)
                     menu_main.findItem(R.id.nav_manage_group).setVisible(false)
+                    menu_main.findItem(R.id.nav_manage_complaints_groups).setVisible(false)
 
                     val tabLayout: TabLayout = findViewById(R.id.tab_layout_main)
                     val viewPager: ViewPager = findViewById(R.id.view_pager_main)
@@ -237,6 +238,14 @@ class MainActivity : AppCompatActivity() {
 
         menuMain.findItem(R.id.nav_updates).setOnMenuItemClickListener {
             val intent = Intent(this@MainActivity, CheckUpdates::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+            finish()
+            true
+        }
+
+        menuMain.findItem(R.id.nav_manage_complaints_groups).setOnMenuItemClickListener {
+            val intent = Intent(this@MainActivity, ManageUserGroup::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
             finish()

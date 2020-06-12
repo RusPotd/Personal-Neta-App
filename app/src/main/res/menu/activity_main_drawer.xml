@@ -13,6 +13,10 @@
             android:icon="@drawable/inbox"
             android:title="Registered Complaints" />
         <item
+            android:id="@+id/nav_manage_complaints_groups"
+            android:icon="@drawable/categories"
+            android:title="Complaint Categories" />
+        <item
             android:id="@+id/nav_create_group"
             android:icon="@drawable/new_group"
             android:title="New Broadcast" />

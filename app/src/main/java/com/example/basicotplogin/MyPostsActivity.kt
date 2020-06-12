@@ -33,7 +33,6 @@ class MyPostsActivity : AppCompatActivity() {
         recylerView = findViewById(R.id.recycler_view_post_myposts)
         recylerView!!.setHasFixedSize(true)
         val linearLayoutManager = LinearLayoutManager(applicationContext)
-        linearLayoutManager.reverseLayout = true
         recylerView!!.layoutManager = linearLayoutManager
 
         val toolbar : Toolbar = findViewById(R.id.myposts_toolbar)                 //create a back button on top of toolbar
@@ -68,8 +67,10 @@ class MyPostsActivity : AppCompatActivity() {
                                     //Admin founded
                                     Admin = true
                                 }
-                                userAdapter = PostAdapter(applicationContext, mUserChats!!, Admin)
-                                recylerView!!.smoothScrollToPosition(userAdapter!!.itemCount);
+                                val MUserChats : MutableList<Posts> = ArrayList(mUserChats!!)
+                                Collections.reverse(MUserChats)
+
+                                userAdapter = PostAdapter(applicationContext, MUserChats, Admin)
                                 recylerView!!.isNestedScrollingEnabled = false
                                 recylerView!!.adapter = userAdapter
                             }

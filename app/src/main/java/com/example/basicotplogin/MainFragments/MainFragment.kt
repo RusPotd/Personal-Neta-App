@@ -50,7 +50,6 @@ class MainFragment : Fragment() {
         recylerView = view.findViewById(R.id.recycler_view_post)
         recylerView!!.setHasFixedSize(true)
         val linearLayoutManager = LinearLayoutManager(view.context)
-        linearLayoutManager.reverseLayout = true
         recylerView!!.layoutManager = linearLayoutManager
 
         val fab: FloatingActionButton = view.findViewById(R.id.fab)
@@ -144,9 +143,9 @@ class MainFragment : Fragment() {
                         //Compare with respect to date of upload
                         var MUserChats : MutableList<Posts> = ArrayList(mUserChats!!)
                         Collections.sort(MUserChats, ComparatorClass())
+                        Collections.reverse(MUserChats)
 
                         userAdapter = PostAdapter(view!!.context, MUserChats, Admin)
-                        recylerView!!.smoothScrollToPosition(userAdapter!!.itemCount);
                         recylerView!!.isNestedScrollingEnabled = false
                         recylerView!!.adapter = userAdapter
                     }
@@ -177,14 +176,17 @@ class MainFragment : Fragment() {
                                     (mUserChats as ArrayList<Posts>).add(user)
                                 }
                                 else {
-                                    var temp = user.getGroup().toString()
-                                    var my_users = my_dict[temp]
-                                    var my_id = FirebaseAuth.getInstance().currentUser!!.uid
-                                    if(my_users!!.contains(my_id)){
+                                    if(FirebaseAuth.getInstance().currentUser!!.uid.equals(user.getSenderId().toString())){
                                         (mUserChats as ArrayList<Posts>).add(user)
                                     }
-                                    //Log.i("\n\nCheck $my_id $temp", my_users.toString())
-                                    //Log.i("\n\n\nMy Users $temp", my_users.toString())
+                                    else{
+                                        var temp = user.getGroup().toString()
+                                        var my_users = my_dict[temp]
+                                        var my_id = FirebaseAuth.getInstance().currentUser!!.uid
+                                        if(my_users!!.contains(my_id)){
+                                            (mUserChats as ArrayList<Posts>).add(user)
+                                        }
+                                    }
                                 }
 
                             }
@@ -194,9 +196,9 @@ class MainFragment : Fragment() {
                     try {
                         var MUserChats : MutableList<Posts> = ArrayList(mUserChats!!)
                         Collections.sort(MUserChats, ComparatorClass())
+                        Collections.reverse(MUserChats)
 
                         userAdapter = PostAdapter(view!!.context, MUserChats, Admin)
-                        recylerView!!.smoothScrollToPosition(userAdapter!!.itemCount);
                         recylerView!!.isNestedScrollingEnabled = false
                         recylerView!!.adapter = userAdapter
                     }

@@ -11,7 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".CheckUpdates"></activity>
+        <activity android:name=".ManageUserGroup"></activity>
+        <activity android:name=".CheckUpdates" />
         <activity android:name=".AboutUs" />
         <activity android:name=".Terms" />
         <activity android:name=".FeedBack" />

@@ -74,6 +74,7 @@ class CreatePost : AppCompatActivity() {
     var my_dict: HashMap<String, ArrayList<String>>? = null
     var gotList: Boolean = false
     var AdminUID: String = ""
+    val mapUsername = HashMap<String, Any>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -97,18 +98,53 @@ class CreatePost : AppCompatActivity() {
         refPosts = FirebaseDatabase.getInstance().reference
         postId = refPosts!!.push().key
 
-        //CHeck Admin
+        //CHeck Admin and update spinner
         refAdmin = FirebaseDatabase.getInstance().reference.child("Admin")
 
         refAdmin!!.addValueEventListener( object : ValueEventListener {
             override fun onDataChange(p0: DataSnapshot) {
                 AdminUID = p0.child("uid").value.toString()
-                if (p0.child("uid").value!!.equals(firebaseUser!!.uid)) {
+                if (AdminUID.equals(firebaseUser!!.uid)) {
                     checkAdmin = true
+                    //Toast.makeText(this@CreatePost, "Admin Found", Toast.LENGTH_SHORT).show()
+                    refBroadCast = FirebaseDatabase.getInstance().reference.child("Broadcasts")
                 }
                 else{
-                    spinner_group.visibility = View.GONE
+                    refBroadCast = FirebaseDatabase.getInstance().reference.child("UserPostCategory")
                 }
+
+                refBroadCast!!.addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(p0: DataSnapshot) {
+                        for (snapShot in p0.children) {
+                            val user: BroadCast? = snapShot.getValue(BroadCast::class.java)
+                            broadCastUsers.add(user!!.getName().toString())
+                        }
+
+                        val arrayAdapter = ArrayAdapter(
+                            this@CreatePost,
+                            android.R.layout.simple_spinner_dropdown_item,
+                            broadCastUsers
+                        )
+                        spinner_group.adapter = arrayAdapter
+                        spinner_group.onItemSelectedListener =
+                            object : AdapterView.OnItemSelectedListener {
+                                override fun onNothingSelected(parent: AdapterView<*>?) {
+                                    //on nothing selected
+                                    broadcastName = "public"
+                                }
+
+                                override fun onItemSelected(
+                                    parent: AdapterView<*>?,
+                                    view: View?,
+                                    position: Int,
+                                    id: Long
+                                ) {
+                                    broadcastName = broadCastUsers[position]
+                                }
+                            }
+                    }
+                    override fun onCancelled(p0: DatabaseError) {}
+                })
             }
             override fun onCancelled(p0: DatabaseError) {}
         })
@@ -126,42 +162,7 @@ class CreatePost : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
-
-        refBroadCast = FirebaseDatabase.getInstance().reference.child("Broadcasts")
-        refBroadCast!!.addListenerForSingleValueEvent(object : ValueEventListener{
-            override fun onDataChange(p0: DataSnapshot) {
-                for(snapShot in p0.children){
-                    val user: BroadCast? = snapShot.getValue(BroadCast::class.java)
-                    broadCastUsers.add(user!!.getName().toString())
-                }
-
-                val arrayAdapter = ArrayAdapter(this@CreatePost, android.R.layout.simple_spinner_item, broadCastUsers)
-                spinner_group.adapter = arrayAdapter
-                spinner_group.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
-                    override fun onNothingSelected(parent: AdapterView<*>?) {
-                        //on nothing selected
-                        broadcastName = "public"
-                    }
-
-                    override fun onItemSelected(
-                        parent: AdapterView<*>?,
-                        view: View?,
-                        position: Int,
-                        id: Long
-                    ) {
-                        broadcastName = broadCastUsers[position]
-                    }
-
-                }
-
-            }
-            override fun onCancelled(p0: DatabaseError) {
-                TODO("Not yet implemented")
-            }
-        })
-
-        //spinner_group
-
+        //get User data
         refUsers!!.addValueEventListener( object : ValueEventListener {
             override fun onDataChange(p0: DataSnapshot) {
                 if(p0.exists()){
@@ -179,32 +180,6 @@ class CreatePost : AppCompatActivity() {
             }
         })
 
-        refPosts!!.addValueEventListener(object : ValueEventListener{
-            override fun onDataChange(p0: DataSnapshot) {
-                post = p0.getValue(Posts::class.java)
-
-                post!!.setData(post_data.text.toString())
-                post!!.setGroup(broadcastName)
-                post!!.setSenderId(firebaseUser!!.uid)
-                post!!.setSenderImage(senderImage)
-                post!!.setSenderName(senderName)
-                post!!.setPostId(postId.toString())
-                post!!.setTime(time!!)
-
-                if(url!=""){
-                    Toast.makeText(this@CreatePost, "Image exists", Toast.LENGTH_LONG).show()
-                    post!!.setImage(url)
-                    Picasso.get().load(url).into(post_image)
-                    post_image.visibility = VISIBLE
-                }
-
-            }
-
-            override fun onCancelled(p0: DatabaseError) {
-
-            }
-        })
-
         post_image_btn.setOnClickListener {
             pickImage()
         }
@@ -216,7 +191,7 @@ class CreatePost : AppCompatActivity() {
     }
 
     private fun sendPost() {
-        val mapUsername = HashMap<String, Any>()
+
         mapUsername["data"] = post_data.text.toString()
         mapUsername["senderId"] = firebaseUser!!.uid
         mapUsername["group"] = broadcastName
@@ -273,14 +248,13 @@ class CreatePost : AppCompatActivity() {
 
         if(requestCode == RequestCode && resultCode == Activity.RESULT_OK && data!!.data != null){
             imageUri = data.data //pass image data to image uri variable
-            Toast.makeText(this@CreatePost, "Uploading...", Toast.LENGTH_LONG).show()
             uploadImageToDatabase()
         }
     }
 
     private fun uploadImageToDatabase() {
         val progressBar = ProgressDialog(this@CreatePost)
-        progressBar.setMessage("Image is uploading please wait...")
+        progressBar.setMessage("Getting Image, please wait...")
         progressBar.show()
 
         if(imageUri!=null){         //storing image in storage while avoiding multiple copies using time as unique constraint
@@ -301,13 +275,14 @@ class CreatePost : AppCompatActivity() {
                     val downloadUrl = task.result
                     url = downloadUrl.toString()
 
-                    val mapProfileImg = HashMap<String, Any>()
-                    mapProfileImg["image"] = url
+                    mapUsername["image"] = url
+                    Picasso.get().load(url).into(post_image)
+                    post_image.visibility = VISIBLE
                     try{
                         post!!.setImage(url)
                     }
                     catch(e: Exception){}
-                    refPosts!!.child("Posts").child(firebaseUser!!.uid).child(postId!!).updateChildren(mapProfileImg)
+                    Toast.makeText(this@CreatePost, "Image Obtained", Toast.LENGTH_LONG).show()
                     progressBar.dismiss()
 
                 }
