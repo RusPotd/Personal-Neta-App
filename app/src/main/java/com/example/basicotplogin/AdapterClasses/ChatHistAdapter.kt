@@ -1,20 +1,28 @@
 package com.example.basicotplogin.AdapterClasses
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
+import android.content.Intent
+import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.example.basicotplogin.MessageChatActivity
 import com.example.basicotplogin.ModelClasses.ChatHist
 import com.example.basicotplogin.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.FirebaseDatabase
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.receiver_message_view.view.*
 import kotlinx.android.synthetic.main.sender_message_view.view.*
+import java.util.*
 
 
 class ChatHistAdapter (mContext: Context,
@@ -62,25 +70,49 @@ class ChatHistAdapter (mContext: Context,
 
         //image-message right side
         if(user.getSender().equals(firebaseUser!!.uid)){
-            if(user!!.getMessage() == "sent you an image."){
+
+            if(user.getMessage() == "sent you an image."){
                 holder.userChatImageRight!!.visibility = View.VISIBLE
                 holder.userChatTxt.visibility = View.GONE
                 Picasso.get().load(user.getUrl()).into(holder.userChatImageRight)
             }
             else{
                 holder.userChatTxt.visibility = View.VISIBLE
-                holder.userChatTxt.text = user!!.getMessage()
+                holder.userChatTxt.text = user.getMessage()
             }
+
+            //Do not implement message delete for users due to security issue
+            /*holder.itemView.setOnLongClickListener {
+                val builder: AlertDialog.Builder = AlertDialog.Builder(mContext)
+                builder.setTitle("Delete Message?")
+
+                builder.setPositiveButton("Delete For All"){ dialog, which ->
+                    val messageHashMap = HashMap<String, Any?>()
+                    messageHashMap["deleted"] = "true"
+                    FirebaseDatabase.getInstance().reference.child("Chats").child(user.getReceiver().toString()).child(user.getKey().toString()).updateChildren(messageHashMap)
+                    FirebaseDatabase.getInstance().reference.child("Chats").child(user.getSender().toString()).child(user.getKey().toString()).updateChildren(messageHashMap)
+                }
+                builder.setNeutralButton("Delete For Me") { dialog, which ->
+                    FirebaseDatabase.getInstance().reference.child("Chats").child(user.getSender().toString()).child(user.getKey().toString()).removeValue()
+                }
+                builder.setNegativeButton("Cancel") { dialog, which ->
+                    return@setNegativeButton
+                }
+
+                builder.show()
+                true
+            }*/
         }
         //image-message left side
         else {
-            if (user!!.getMessage() == "sent you an image.") {
+
+            if (user.getMessage() == "sent you an image.") {
                 holder.userChatImageLeft!!.visibility = View.VISIBLE
                 holder.userChatTxt.visibility = View.GONE
                 Picasso.get().load(user.getUrl()).into(holder.userChatImageLeft)
             } else {
                 holder.userChatTxt.visibility = View.VISIBLE
-                holder.userChatTxt.text = user!!.getMessage()
+                holder.userChatTxt.text = user.getMessage()
             }
         }
 

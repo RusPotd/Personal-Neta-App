@@ -5,14 +5,16 @@ class ChatHist {
     private var  receiver : String = ""
     private var  sender : String = ""
     private var  url : String = ""
+    private var  key : String = ""
 
     constructor()
 
-    constructor(message: String, receiver: String, sender: String, url: String) {
+    constructor(message: String, receiver: String, sender: String, url: String, key: String) {
         this.message = message
         this.receiver = receiver
         this.sender = sender
         this.url = url
+        this.key = key
     }
 
     fun getMessage(): String?{
@@ -45,6 +47,14 @@ class ChatHist {
 
     fun setUrl(url: String){
         this.url = url
+    }
+
+    fun getKey(): String?{
+        return key
+    }
+
+    fun setKey(key: String){
+        this.key = key
     }
 
 }

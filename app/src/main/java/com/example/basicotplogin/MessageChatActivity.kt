@@ -42,7 +42,6 @@ class MessageChatActivity : AppCompatActivity() {
     var refreshToken: String= ""
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_message_chat)
@@ -93,7 +92,7 @@ class MessageChatActivity : AppCompatActivity() {
 
         recylerView = findViewById(R.id.recycler_view_chats)
         recylerView!!.setHasFixedSize(false)
-        recylerView!!.layoutManager = LinearLayoutManager(baseContext)
+        recylerView!!.layoutManager = LinearLayoutManager(this@MessageChatActivity)
 
         mUserChats = ArrayList()
         retrieveAllChats()
@@ -106,8 +105,10 @@ class MessageChatActivity : AppCompatActivity() {
 
             }
             else{
-                sendMessageToUser(firebaseUser!!.uid, userIdVisit.toString(), msg, firebaseUser!!.uid)
-                sendMessageToUser(firebaseUser!!.uid, userIdVisit.toString(), msg, userIdVisit.toString())
+                reference = FirebaseDatabase.getInstance().reference
+                var messageKey = reference!!.push().key
+                sendMessageToUser(firebaseUser!!.uid, userIdVisit.toString(), msg, firebaseUser!!.uid, messageKey!!)
+                sendMessageToUser(firebaseUser!!.uid, userIdVisit.toString(), msg, userIdVisit.toString(), messageKey)
 
             }
             text_message.setText("")
@@ -152,7 +153,7 @@ class MessageChatActivity : AppCompatActivity() {
 
                 }
                 try {
-                    userAdapter = ChatHistAdapter(baseContext!!, mUserChats!!, false)
+                    userAdapter = ChatHistAdapter(this@MessageChatActivity!!, mUserChats!!, false)
                     recylerView!!.smoothScrollToPosition(userAdapter!!.itemCount);
                     recylerView!!.adapter = userAdapter
                 }
@@ -169,21 +170,18 @@ class MessageChatActivity : AppCompatActivity() {
 
     }
 
+    private fun sendMessageToUser(senderId: String, receiverId: String, msg: String, CHILD: String, messageKey: String) {
 
-
-    private fun sendMessageToUser(senderId: String, receiverId: String, msg: String, CHILD: String) {
-        val reference = FirebaseDatabase.getInstance().reference
-        val messageKey = reference.push().key
+        reference = FirebaseDatabase.getInstance().reference
 
         val messageHashMap = HashMap<String, Any?>()
         messageHashMap["sender"] = senderId
         messageHashMap["message"] = msg
         messageHashMap["receiver"] = receiverId
         messageHashMap["url"] = ""
-        //messageHashMap["isseen"] = false
-        //messageHashMap["messageId"] = messageKey
+        messageHashMap["key"] = messageKey
 
-        reference.child("Chats")
+        reference!!.child("Chats")
             .child(CHILD)
             .child(messageKey!!)
             .setValue(messageHashMap)
@@ -326,7 +324,7 @@ class MessageChatActivity : AppCompatActivity() {
                     messageHashMap["sender"] = firebaseUser!!.uid
                     messageHashMap["message"] = "sent you an image."
                     messageHashMap["receiver"] = userIdVisit
-                    //messageHashMap["isseen"] = false
+                    messageHashMap["key"] = messageId.toString()
                     messageHashMap["url"] = url
 
                     ref.child("Chats").child(firebaseUser!!.uid).child(messageId!!).setValue(messageHashMap)
