@@ -75,7 +75,6 @@ class PostMsgChatActivity : AppCompatActivity() {
             val msg = text_message_post.text.toString()
             if(msg == ""){
                 Toast.makeText(this@PostMsgChatActivity, "Please write a message first", Toast.LENGTH_LONG).show()  // !! indicates nor null asserted
-
             }
             else{
                 sendMessageToUser(firebaseUser!!.uid, msg, PostId)

@@ -57,7 +57,7 @@ class CreatePost : AppCompatActivity() {
     var RequestCode = 438;
     var imageUri: Uri? = null
     var storageRef: StorageReference? = null
-    var url: String = ""
+    var url: String = "null"
     var postId: String? = null
     var post: Posts? = null
     var senderImage: String = ""
@@ -75,6 +75,11 @@ class CreatePost : AppCompatActivity() {
     var gotList: Boolean = false
     var AdminUID: String = ""
     val mapUsername = HashMap<String, Any>()
+    private var editData: String = ""
+    private var editPostId: String = ""
+    private var editImage: String = ""
+    private var editGroup: String = ""
+    private var EditPost: Boolean = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -142,6 +147,24 @@ class CreatePost : AppCompatActivity() {
                                     broadcastName = broadCastUsers[position]
                                 }
                             }
+
+                        if(intent.hasExtra("id") && intent.hasExtra("data")){
+                            EditPost = true
+                            editData = intent.getStringExtra("data")!!
+                            editPostId = intent.getStringExtra("id")!!
+                            editImage = intent.getStringExtra("image")!!
+                            editGroup = intent.getStringExtra("group")!!
+
+                            postId = editPostId
+                            if(!editImage.equals("null")){
+                                url = editImage
+                                post_image.visibility = VISIBLE
+                                Picasso.get().load(editImage).into(post_image)
+                            }
+                            post_data.setText(editData)
+                            spinner_group.setSelection(broadCastUsers.indexOf(editGroup))
+
+                        }
                     }
                     override fun onCancelled(p0: DatabaseError) {}
                 })
@@ -156,7 +179,10 @@ class CreatePost : AppCompatActivity() {
         supportActionBar!!.title = "Create New Post"
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         toolbar.setNavigationOnClickListener {
-            FirebaseDatabase.getInstance().reference.child("Posts").child(firebaseUser!!.uid).child(postId!!).removeValue()
+            if(!EditPost) {
+                FirebaseDatabase.getInstance().reference.child("Posts").child(firebaseUser!!.uid)
+                    .child(postId!!).removeValue()
+            }
             val intent =  Intent(this@CreatePost, MainActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
@@ -199,13 +225,7 @@ class CreatePost : AppCompatActivity() {
         mapUsername["senderName"] = senderName
         mapUsername["postId"] = postId!!
         mapUsername["time"] = time!!
-        if(url==""){
-            mapUsername["image"] = "null"
-            try{
-                post!!.setImage("null")
-            }
-            catch(e: Exception){}
-        }
+        mapUsername["image"] = url
 
 
         refPosts!!.child("Posts").child(firebaseUser!!.uid).child(postId!!).updateChildren(mapUsername).addOnCompleteListener {
@@ -234,7 +254,6 @@ class CreatePost : AppCompatActivity() {
             finish()
         }
     }
-
 
     private fun pickImage() {
         val intent = Intent()

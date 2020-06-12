@@ -202,15 +202,12 @@ class MainFragment : Fragment() {
                         recylerView!!.isNestedScrollingEnabled = false
                         recylerView!!.adapter = userAdapter
                     }
-                    catch (e: Exception) {
-
-                    }
+                    catch (e: Exception) {}
 
                 }
 
-                override fun onCancelled(p0: DatabaseError) {
+                override fun onCancelled(p0: DatabaseError) {}
 
-                }
             })
         }
 
