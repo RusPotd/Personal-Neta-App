@@ -11,10 +11,11 @@ class Posts {
     private var senderName: String = ""
     private var postId: String = ""
     private var time: Date? = null
+    private var isCamp: String = ""
 
     constructor()
 
-    constructor(data: String, senderId: String, group: String, image: String, senderImage: String, senderName: String, postId: String) {
+    constructor(data: String, senderId: String, group: String, image: String, senderImage: String, senderName: String, postId: String, time: Date, isCamp: String) {
         this.data = data
         this.senderId = senderId
         this.group = group
@@ -23,6 +24,7 @@ class Posts {
         this.senderName = senderName
         this.postId = postId
         this.time = time
+        this.isCamp = isCamp
     }
 
     fun getData(): String?{
@@ -87,6 +89,14 @@ class Posts {
 
     fun setTime(time: Date){
         this.time = time
+    }
+
+    fun getIsCamp(): String?{
+        return isCamp
+    }
+
+    fun setIsCamp(isCamp: String){
+        this.isCamp = isCamp
     }
 
 }

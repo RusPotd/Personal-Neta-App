@@ -98,6 +98,18 @@
         android:visibility="gone"
         />
 
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/is_camp"
+        android:padding="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Mark this as Campaign?"
+        android:layout_marginLeft="30dp"
+        android:layout_above="@id/post_image_btn"
+        android:textSize="20sp"
+        android:layout_marginBottom="7dp"
+        />
+
     <LinearLayout
         android:id="@+id/post_image_btn"
         android:padding="5dp"

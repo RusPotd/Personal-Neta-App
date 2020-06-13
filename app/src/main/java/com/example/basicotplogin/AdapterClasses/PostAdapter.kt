@@ -144,6 +144,11 @@ class PostAdapter (mContext: Context,
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val user: Posts = mUsers[position]
 
+        //hide unhide mark as interested
+        if(!user.getIsCamp().equals("true")){
+            holder.raise_hand_bar!!.visibility = View.GONE
+        }
+
         if(!user.getImage().equals("null")) {
             holder.userDataImage!!.visibility = View.VISIBLE
             holder.userDataTxt.text = user.getData()

@@ -80,6 +80,7 @@ class CreatePost : AppCompatActivity() {
     private var editImage: String = ""
     private var editGroup: String = ""
     private var EditPost: Boolean = false
+    private var check_is_camp : String = "false"
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -116,6 +117,7 @@ class CreatePost : AppCompatActivity() {
                 }
                 else{
                     refBroadCast = FirebaseDatabase.getInstance().reference.child("UserPostCategory")
+                    is_camp.visibility = View.GONE
                 }
 
                 refBroadCast!!.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -188,6 +190,7 @@ class CreatePost : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+
         //get User data
         refUsers!!.addValueEventListener( object : ValueEventListener {
             override fun onDataChange(p0: DataSnapshot) {
@@ -218,6 +221,10 @@ class CreatePost : AppCompatActivity() {
 
     private fun sendPost() {
 
+        if(is_camp.isChecked()){
+            check_is_camp = "true"
+        }
+
         mapUsername["data"] = post_data.text.toString()
         mapUsername["senderId"] = firebaseUser!!.uid
         mapUsername["group"] = broadcastName
@@ -226,6 +233,7 @@ class CreatePost : AppCompatActivity() {
         mapUsername["postId"] = postId!!
         mapUsername["time"] = time!!
         mapUsername["image"] = url
+        mapUsername["isCamp"] = check_is_camp
 
 
         refPosts!!.child("Posts").child(firebaseUser!!.uid).child(postId!!).updateChildren(mapUsername).addOnCompleteListener {
