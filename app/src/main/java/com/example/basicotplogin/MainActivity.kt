@@ -309,7 +309,7 @@ class MainActivity : AppCompatActivity() {
             intent.setType("application/vnd.android.package-archive")
             intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(File(apkPath)))
             startActivity(Intent.createChooser(intent, "ShareVia"))
-            true
+            false
         }
 
     }
