@@ -70,7 +70,7 @@ class MyPostsActivity : AppCompatActivity() {
                                 val MUserChats : MutableList<Posts> = ArrayList(mUserChats!!)
                                 Collections.reverse(MUserChats)
 
-                                userAdapter = PostAdapter(applicationContext, MUserChats, Admin)
+                                userAdapter = PostAdapter(this@MyPostsActivity, MUserChats, Admin)
                                 recylerView!!.isNestedScrollingEnabled = false
                                 recylerView!!.adapter = userAdapter
                             }

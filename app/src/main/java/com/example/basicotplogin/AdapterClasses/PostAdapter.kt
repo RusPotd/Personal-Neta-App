@@ -5,11 +5,12 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
-import android.view.*
-import android.widget.ImageView
-import android.widget.RelativeLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.os.Build
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.*
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.basicotplogin.CreatePost
 import com.example.basicotplogin.Fragments.APIService
@@ -18,19 +19,13 @@ import com.example.basicotplogin.Notifications.*
 import com.example.basicotplogin.PostMsgChatActivity
 import com.example.basicotplogin.R
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.activity_settings.*
 import retrofit2.Call
 import retrofit2.Callback
-import java.util.*
-import java.util.Arrays.copyOfRange
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 
 class PostAdapter (mContext: Context,
@@ -75,6 +70,7 @@ class PostAdapter (mContext: Context,
         var raise_hand_bar: RelativeLayout?
         var hand_display: ImageView?
         var hand_display_txt: TextView?
+        var share_post: LinearLayout?
 
         init {
             userDataTxt = itemView.findViewById(R.id.post_text_display)
@@ -88,7 +84,7 @@ class PostAdapter (mContext: Context,
             raise_hand_bar = itemView.findViewById(R.id.raise_hand_bar)
             hand_display = itemView.findViewById(R.id.hand_display)
             hand_display_txt = itemView.findViewById(R.id.hand_display_txt)
-
+            share_post = itemView.findViewById(R.id.share_post)
         }
 
     }
@@ -144,9 +140,13 @@ class PostAdapter (mContext: Context,
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val user: Posts = mUsers[position]
 
+
         //hide unhide mark as interested
         if(!user.getIsCamp().equals("true")){
             holder.raise_hand_bar!!.visibility = View.GONE
+        }
+        else{
+            holder.raise_hand_bar!!.visibility = View.VISIBLE
         }
 
         if(!user.getImage().equals("null")) {
@@ -181,6 +181,9 @@ class PostAdapter (mContext: Context,
                if (p0.hasChild(firebaseUser!!.uid)){
                    holder.like_btn!!.setImageResource(R.drawable.liked)
                }
+               else{
+                   holder.like_btn!!.setImageResource(R.drawable.like)
+               }
                 holder.like_txt!!.setText(p0.childrenCount.toString())
             }
         })
@@ -195,8 +198,24 @@ class PostAdapter (mContext: Context,
                     holder.hand_display_txt!!.setText("Interested")
                     holder.hand_display_txt!!.setTextColor(Color.BLUE)
                 }
+                else{
+                    holder.hand_display!!.setImageResource(R.drawable.hand)
+                    holder.hand_display_txt!!.setTextColor(Color.BLACK)
+                }
             }
         })
+
+        holder.share_post!!.setOnClickListener {
+            val shareIntent = Intent(Intent.ACTION_SEND)
+            shareIntent.type = "text/plain"
+            if(!user.getImage().toString().equals("null")){
+                shareIntent.putExtra(Intent.EXTRA_TEXT, user.getData().toString()+"\n\n"+user.getImage().toString()+"\n\nPost from Janata Talks")
+            }
+            else{
+                shareIntent.putExtra(Intent.EXTRA_TEXT, user.getData().toString()+"\n\nPost from Janata Talks")
+            }
+            startActivity(mContext, Intent.createChooser(shareIntent, "Share..."), null)
+        }
 
         holder.like_btn!!.setOnClickListener {
             holder.like_btn!!.setImageResource(R.drawable.liked)
@@ -207,6 +226,7 @@ class PostAdapter (mContext: Context,
             mapLikes["id"] = FirebaseAuth.getInstance().currentUser!!.uid
             refLike.updateChildren(mapLikes)
         }
+
         holder.raise_hand_bar!!.setOnClickListener {
                 holder.hand_display!!.setImageResource(R.drawable.handup)
                 holder.hand_display_txt!!.setText("Interested")
@@ -233,37 +253,40 @@ class PostAdapter (mContext: Context,
 
         if(FirebaseAuth.getInstance().currentUser!!.uid.equals(user.getSenderId().toString())) {
             holder.menuClick!!.visibility = View.VISIBLE
-            holder.menuClick!!.setOnClickListener {
-                val option = arrayOf<CharSequence>(
-                    "Edit Post",
-                    "Delete Post",
-                    "Cancel"
-                )
-                val builder: AlertDialog.Builder = AlertDialog.Builder(mContext)
-                builder.setTitle("What do u want?")
-                builder.setItems(option, DialogInterface.OnClickListener { dialog, position ->
-                    if (position == 0) {
-                        val intent = Intent(mContext, CreatePost::class.java)
-                        intent.putExtra("id", user.getPostId())
-                        intent.putExtra("image", user.getImage())
-                        intent.putExtra("data", user.getData())
-                        intent.putExtra("group", user.getGroup())
-                        mContext.startActivity(intent)
-                    }
-                    if (position == 1) {
-                        FirebaseDatabase.getInstance().reference.child("Posts")
-                            .child(user.getSenderId().toString()).child(user.getPostId().toString())
-                            .removeValue()
-                    }
-                    if (position == 2) {
-                        return@OnClickListener
-                    }
-                })
-
-                builder.show()
-            }
         }
-
+        else
+        {
+            holder.menuClick!!.visibility = View.GONE
+        }
+        //menu click listener
+        holder.menuClick!!.setOnClickListener {
+            val option = arrayOf<CharSequence>(
+                "Edit Post",
+                "Delete Post",
+                "Cancel"
+            )
+            val builder: AlertDialog.Builder = AlertDialog.Builder(mContext)
+            builder.setTitle("What do u want?")
+            builder.setItems(option, DialogInterface.OnClickListener { dialog, position ->
+                if (position == 0) {
+                    val intent = Intent(mContext, CreatePost::class.java)
+                    intent.putExtra("id", user.getPostId())
+                    intent.putExtra("image", user.getImage())
+                    intent.putExtra("data", user.getData())
+                    intent.putExtra("group", user.getGroup())
+                    mContext.startActivity(intent)
+                }
+                if (position == 1) {
+                    FirebaseDatabase.getInstance().reference.child("Posts")
+                        .child(user.getSenderId().toString()).child(user.getPostId().toString())
+                        .removeValue()
+                }
+                if (position == 2) {
+                    return@OnClickListener
+                }
+            })
+            builder.show()
+        }
 
     }
 
