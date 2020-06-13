@@ -27,7 +27,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.viewpager.widget.ViewPager
-import com.example.basicotplogin.MainFragments.ChatFragment
+import com.example.basicotplogin.Fragments.ChatsFragment
 import com.example.basicotplogin.MainFragments.MainFragment
 import com.example.basicotplogin.ModelClasses.Users
 import com.example.basicotplogin.Notifications.Token
@@ -41,7 +41,6 @@ import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
-import kotlin.system.exitProcess
 
 
 class MainActivity : AppCompatActivity() {
@@ -115,7 +114,7 @@ class MainActivity : AppCompatActivity() {
                     val viewPager: ViewPager = findViewById(R.id.view_pager_main)
                     val viewPagerAdater = ViewPagerAdapter(supportFragmentManager)
                     viewPagerAdater.addFragment(MainFragment(), "Home")
-                    viewPagerAdater.addFragment(ChatFragment(), "Chats")
+                    viewPagerAdater.addFragment(ChatsFragment(), "Recent Chats")
                     viewPager.adapter = viewPagerAdater
                     tabLayout.setupWithViewPager(viewPager)
                 }

@@ -23,8 +23,8 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile_image_mc"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="47dp"
+            android:layout_height="47dp"
             android:background="#E4E4E4"
             android:src="@drawable/ic_profile"
             android:tint="@android:color/white">
@@ -37,6 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/profile_image_mc"
             android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp"
             android:text="UserName"
             android:textColor="#FFFFFF"
             android:textSize="18sp">
@@ -47,6 +48,7 @@
             android:id="@+id/call_profile"
             android:layout_width="32dp"
             android:layout_height="32dp"
+            android:layout_marginTop="6dp"
             android:background="#E4E4E4"
             android:layout_alignParentRight="true"
             android:layout_marginRight="40dp"
@@ -98,6 +100,7 @@
             android:layout_marginRight="6dp"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/attach_image_file"
+            android:layout_toLeftOf="@id/send_message_btn"
             android:ems="10"
             android:inputType="textPersonName"
             android:hint="Write Message here..."

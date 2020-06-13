@@ -40,6 +40,7 @@ class MessageChatActivity : AppCompatActivity() {
     var notify: Boolean = false
     var apiService: APIService? = null
     var refreshToken: String= ""
+    var phoneNumber: String = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,6 +80,7 @@ class MessageChatActivity : AppCompatActivity() {
 
                 user_name_mc.text = user!!.getUsername()
                 Picasso.get().load(user.getProfile()).into(profile_image_mc)
+                phoneNumber = user.getPhone().toString()
 
                 //retrieveMessages(firebaseUser!!.uid, userIdVisit, user.getProfile())
 
@@ -88,6 +90,15 @@ class MessageChatActivity : AppCompatActivity() {
 
             }
         })
+
+
+        call_profile.setOnClickListener {
+            if(phoneNumber.length>2){
+                var u: Uri = Uri.parse("tel:$phoneNumber");
+                var i: Intent = Intent(Intent.ACTION_DIAL, u);
+                startActivity(i)
+            }
+        }
 
 
         recylerView = findViewById(R.id.recycler_view_chats)

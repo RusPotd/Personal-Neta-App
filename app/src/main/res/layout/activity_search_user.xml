@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SearchUser">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_search_user"
+        android:layout_width="match_parent"
+        android:layout_height="66dp"
+        android:background="#E4E4E4"
+        android:gravity="center_horizontal"
+       >
+    </androidx.appcompat.widget.Toolbar>
+
+    <EditText
+        android:id="@+id/searchUserET"
+        android:layout_width="match_parent"
+        android:layout_height="66dp"
+        android:hint="Search Users"
+        android:textSize="18sp"
+        android:layout_toLeftOf="@id/search_user_btn"
+        android:layout_marginLeft="50dp"
+        android:visibility="gone"
+        />
+
+    <ImageView
+        android:id="@+id/search_user_btn"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:src="@drawable/search"
+        android:layout_alignParentRight="true"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/searchList"
+        android:layout_marginTop="30dp"
+        android:layout_below="@+id/toolbar_search_user"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        >
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+</RelativeLayout>
