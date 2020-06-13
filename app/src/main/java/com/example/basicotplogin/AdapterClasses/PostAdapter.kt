@@ -42,7 +42,6 @@ class PostAdapter (mContext: Context,
     private val mContext: Context
     private val mUsers: List<Posts>
     private var isAdmin: Boolean
-    private var raisedHandAlready: Boolean
     private var firebaseUser = FirebaseAuth.getInstance().currentUser
     private var apiService = Client.Client.getClient("https://fcm.googleapis.com/")!!.create(
         APIService::class.java)
@@ -51,7 +50,6 @@ class PostAdapter (mContext: Context,
         this.mUsers = mUsers
         this.mContext = mContext
         this.isAdmin = isAdmin
-        this.raisedHandAlready = false
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostAdapter.ViewHolder {
@@ -171,7 +169,7 @@ class PostAdapter (mContext: Context,
         }
 
         var refLike = FirebaseDatabase.getInstance().reference.child("Likes").child(user.getPostId().toString())
-        refLike.addListenerForSingleValueEvent(object : ValueEventListener {
+        refLike.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {}
 
             override fun onDataChange(p0: DataSnapshot) {
@@ -183,7 +181,7 @@ class PostAdapter (mContext: Context,
         })
 
         var refInterest = FirebaseDatabase.getInstance().reference.child("Interested").child(user.getPostId().toString())
-        refInterest.addListenerForSingleValueEvent(object : ValueEventListener {
+        refInterest.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {}
 
             override fun onDataChange(p0: DataSnapshot) {
@@ -191,10 +189,10 @@ class PostAdapter (mContext: Context,
                     holder.hand_display!!.setImageResource(R.drawable.handup)
                     holder.hand_display_txt!!.setText("Interested")
                     holder.hand_display_txt!!.setTextColor(Color.BLUE)
-                    raisedHandAlready = true
                 }
             }
         })
+
         holder.like_btn!!.setOnClickListener {
             holder.like_btn!!.setImageResource(R.drawable.liked)
 

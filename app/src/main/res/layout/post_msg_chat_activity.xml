@@ -20,7 +20,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="26dp"
-            android:text="Rushi's Post"
             android:textColor="#FFFFFF"
             android:textSize="18sp">
 

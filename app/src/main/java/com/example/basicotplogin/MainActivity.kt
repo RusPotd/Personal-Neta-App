@@ -1,18 +1,27 @@
 package com.example.basicotplogin
 
+import android.Manifest
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.ApplicationInfo
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.StrictMode
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.animation.TranslateAnimation
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
@@ -28,11 +37,11 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import com.google.firebase.iid.FirebaseInstanceId
-import com.google.firebase.messaging.FirebaseMessaging
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_settings.*
+import java.io.File
+import kotlin.system.exitProcess
 
 
 class MainActivity : AppCompatActivity() {
@@ -43,13 +52,26 @@ class MainActivity : AppCompatActivity() {
     var Admin: Boolean = false
     var refAdmin: DatabaseReference? = null
     private lateinit var appBarConfiguration: AppBarConfiguration
+    private val RECORD_REQUEST_CODE = 1
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        firebaseUser = FirebaseAuth.getInstance().currentUser
+        val permission = ContextCompat.checkSelfPermission(this,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE)
 
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                RECORD_REQUEST_CODE)
+        }
+
+        val builder: StrictMode.VmPolicy.Builder = StrictMode.VmPolicy.Builder()
+        StrictMode.setVmPolicy(builder.build())
+
+        firebaseUser = FirebaseAuth.getInstance().currentUser
 
         //Rest of code
         refreshToken = FirebaseInstanceId.getInstance().token!!
@@ -151,8 +173,37 @@ class MainActivity : AppCompatActivity() {
             finish()
         }
 
-        addMenuItems(menu_main)             //add menu itemclicklistener
+        addMenuItems(menu_main)  //add menu itemclicklistener
 
+        //check for updates
+        val versionName = BuildConfig.VERSION_NAME
+
+        var refUpdate = FirebaseDatabase.getInstance().reference.child("Update")
+        refUpdate.addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {}
+
+            override fun onDataChange(p0: DataSnapshot) {
+                if (!p0.child("version").value!!.equals(versionName) and !(intent.hasExtra("notUpdate"))) {
+                    val intent = Intent(this@MainActivity, CheckUpdates::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                    finish()
+                }
+            }
+        })
+
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int,
+                                             permissions: Array<String>, grantResults: IntArray) {
+        when (requestCode) {
+            RECORD_REQUEST_CODE -> {
+                if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this@MainActivity, "This app requires Storage Permission!! Please Allow", Toast.LENGTH_LONG).show()
+                    //exitProcess(0)
+                }
+            }
+        }
     }
 
     private fun addMenuItems(menuMain: Menu) {
@@ -252,6 +303,15 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
+        menuMain.findItem(R.id.nav_share).setOnMenuItemClickListener {
+            var api: ApplicationInfo = applicationContext.applicationInfo
+            var apkPath = api.sourceDir
+            var intent: Intent = Intent(Intent.ACTION_SEND)
+            intent.setType("application/vnd.android.package-archive")
+            intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(File(apkPath)))
+            startActivity(Intent.createChooser(intent, "ShareVia"))
+            true
+        }
 
     }
 

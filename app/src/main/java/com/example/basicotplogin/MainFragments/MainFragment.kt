@@ -1,11 +1,13 @@
 package com.example.basicotplogin.MainFragments
 
+import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -39,6 +41,7 @@ class MainFragment : Fragment() {
     var refAdmin: DatabaseReference? = null
     var firebaseUserAdmin: String = ""
     var my_dict: HashMap<String, ArrayList<String>> = HashMap()
+    private var progressBar: ProgressDialog? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,6 +49,10 @@ class MainFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view: View = inflater.inflate(R.layout.fragment_main, container, false)
+
+        progressBar = ProgressDialog(context)
+        progressBar!!.setMessage("Almost There, Please wait...")
+        progressBar!!.show()
 
         recylerView = view.findViewById(R.id.recycler_view_post)
         recylerView!!.setHasFixedSize(true)
@@ -145,9 +152,11 @@ class MainFragment : Fragment() {
                         Collections.sort(MUserChats, ComparatorClass())
                         Collections.reverse(MUserChats)
 
+
                         userAdapter = PostAdapter(view!!.context, MUserChats, Admin)
                         recylerView!!.isNestedScrollingEnabled = false
                         recylerView!!.adapter = userAdapter
+                        progressBar!!.dismiss()
                     }
                     catch (e: Exception) {
 
@@ -201,6 +210,7 @@ class MainFragment : Fragment() {
                         userAdapter = PostAdapter(view!!.context, MUserChats, Admin)
                         recylerView!!.isNestedScrollingEnabled = false
                         recylerView!!.adapter = userAdapter
+                        progressBar!!.dismiss()
                     }
                     catch (e: Exception) {}
 
