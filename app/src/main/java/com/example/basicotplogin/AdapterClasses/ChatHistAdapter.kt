@@ -11,10 +11,13 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.basicotplogin.MessageChatActivity
 import com.example.basicotplogin.ModelClasses.ChatHist
 import com.example.basicotplogin.R
+import com.example.basicotplogin.ViewImageFullScreen
+import com.example.basicotplogin.WelcomeActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
@@ -75,6 +78,12 @@ class ChatHistAdapter (mContext: Context,
                 holder.userChatImageRight!!.visibility = View.VISIBLE
                 holder.userChatTxt.visibility = View.GONE
                 Picasso.get().load(user.getUrl()).into(holder.userChatImageRight)
+
+                holder.userChatImageRight!!.setOnClickListener {
+                    val intent =  Intent(mContext, ViewImageFullScreen::class.java)
+                    intent.putExtra("url", user.getUrl().toString())
+                    mContext.startActivity(intent)
+                }
             }
             else{
                 holder.userChatTxt.visibility = View.VISIBLE
@@ -110,6 +119,14 @@ class ChatHistAdapter (mContext: Context,
                 holder.userChatImageLeft!!.visibility = View.VISIBLE
                 holder.userChatTxt.visibility = View.GONE
                 Picasso.get().load(user.getUrl()).into(holder.userChatImageLeft)
+
+                holder.userChatImageLeft!!.setOnClickListener {
+                    val intent =  Intent(mContext, ViewImageFullScreen::class.java)
+                    //intent.putExtra("other", "other")
+                    intent.putExtra("url", user.getUrl().toString())
+                    mContext.startActivity(intent)
+                }
+
             } else {
                 holder.userChatTxt.visibility = View.VISIBLE
                 holder.userChatTxt.text = user.getMessage()

@@ -22,7 +22,7 @@
         android:id="@+id/toolbar_main"
         android:layout_width="match_parent"
         android:layout_height="66dp"
-        android:background="#E4E4E4"
+        android:background="#5D91AF"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -30,7 +30,6 @@
             android:id="@+id/Navmenu"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:background="#E4E4E4"
             android:src="@drawable/menu"
             />
 
@@ -40,7 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="56dp"
             android:text="Janata Talks"
-            android:textColor="#02082E"
+            android:textColor="#ffffff"
             android:textStyle="bold"
             android:textSize="20sp">
 
@@ -50,9 +49,10 @@
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout_main"
-        android:background="#E4E4E4"
+        android:background="#5D91AF"
         android:layout_below="@id/toolbar_main"
         android:layout_height="wrap_content"
+        app:tabTextColor="#E1E1E1"
         android:layout_width="match_parent"
         app:tabIndicatorColor="@android:color/white"
         >
