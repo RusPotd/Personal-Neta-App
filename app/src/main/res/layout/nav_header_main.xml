@@ -51,7 +51,7 @@
     <TextView
         android:id="@+id/NavPhone"
         android:layout_marginLeft="15dp"
-        android:textColor="#000000"
+        android:textColor="#055C73"
         android:layout_marginTop="2dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
