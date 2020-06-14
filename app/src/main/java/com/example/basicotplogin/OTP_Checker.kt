@@ -25,6 +25,7 @@ class OTP_Checker : AppCompatActivity() {
     private var Username: String = ""
     private var Contact_no: String = ""
     private var Address: String = ""
+    private var Bio: String = ""
     private var OTP: String = ""
     private var verificationId: String = ""
     lateinit var callbacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks
@@ -51,6 +52,7 @@ class OTP_Checker : AppCompatActivity() {
             Username = intent.getStringExtra("username")!!
             Contact_no = intent.getStringExtra("contact")!!
             Address = intent.getStringExtra("address")!!
+            Bio = intent.getStringExtra("bio")!!
             Toast.makeText(this@OTP_Checker, "Obtained : "+Username+Contact_no+Address, Toast.LENGTH_LONG).show()
         }
         else{
@@ -159,6 +161,7 @@ class OTP_Checker : AppCompatActivity() {
             userHashMap["username"] = Username
             userHashMap["phone"] = Contact_no
             userHashMap["address"] = Address
+            userHashMap["bio"] = Bio
 
             refUsers.updateChildren(userHashMap)
                 .addOnCompleteListener { task ->

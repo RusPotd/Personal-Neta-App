@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.graphics.PorterDuff
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -19,10 +20,13 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
@@ -44,15 +48,20 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     var refUsers: DatabaseReference? = null
     var firebaseUser: FirebaseUser? = null
+    var AdminUid: String? = null
     var refreshToken: String= ""
     var Admin: Boolean = false
     var refAdmin: DatabaseReference? = null
     private lateinit var appBarConfiguration: AppBarConfiguration
     private val RECORD_REQUEST_CODE = 1
+
+    private lateinit var drawer: DrawerLayout
+    private lateinit var toggle: ActionBarDrawerToggle
+    private lateinit var menuHam: Menu
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,6 +77,9 @@ class MainActivity : AppCompatActivity() {
                 RECORD_REQUEST_CODE)
         }
 
+        val navigationView: NavigationView = findViewById(R.id.nav_view)
+        navigationView.setNavigationItemSelectedListener(this)
+
         val builder: StrictMode.VmPolicy.Builder = StrictMode.VmPolicy.Builder()
         StrictMode.setVmPolicy(builder.build())
 
@@ -81,35 +93,32 @@ class MainActivity : AppCompatActivity() {
             findViewById(R.id.toolbar_main)                 //create a back button on top of toolbar
         setSupportActionBar(toolbar)
         supportActionBar!!.title = ""
+        toolbar.getOverflowIcon()!!.setColorFilter(Color.WHITE , PorterDuff.Mode.SRC_ATOP);
 
-        Navmenu.setOnClickListener {
-            nav_view.visibility = View.VISIBLE
-        }
-
-        val navView: NavigationView = findViewById(R.id.nav_view)
-        val header = navView.getHeaderView(0)
-        val menu_main = navView.menu
-
-        header.findViewById<ImageView>(R.id.backMain).setOnClickListener {
-            nav_view.visibility = View.GONE
-        }
+        drawer = findViewById(R.id.drawer_layout)
+        var NavView = drawer.findViewById<NavigationView>(R.id.nav_view)
+        menuHam = NavView.menu
+        toggle = ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        drawer.addDrawerListener(toggle)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeButtonEnabled(true)
 
         refAdmin = FirebaseDatabase.getInstance().reference.child("Admin")
         //CHeck Admin
         refAdmin!!.addListenerForSingleValueEvent( object : ValueEventListener {
             override fun onDataChange(p0: DataSnapshot) {
-
+                AdminUid = p0.child("uid").value.toString()
                 if(p0.child("uid").value!!.equals(firebaseUser!!.uid)){
                     Admin = true
-                    menu_main.findItem(R.id.nav_view_admin).setVisible(false)
-                    menu_main.findItem(R.id.nav_new_complaint).setVisible(false)
-                    menu_main.findItem(R.id.nav_my_complaints).setVisible(false)
+                    menuHam.findItem(R.id.nav_view_admin).setVisible(false)
+                    menuHam.findItem(R.id.nav_new_complaint).setVisible(false)
+                    menuHam.findItem(R.id.nav_my_complaints).setVisible(false)
                     val user: Users? = p0.getValue(Users::class.java)       //create user of instance Users class
                     //user_name.text = user!!.getUsername()
                     //Picasso.get().load(user.getProfile()).placeholder(R.drawable.profile_image).into(profile_image_settings)
-                    header.findViewById<TextView>(R.id.NavName).text = user!!.getUsername()
-                    header.findViewById<TextView>(R.id.NavPhone).text = user.getPhone()
-                    Picasso.get().load(user.getProfile()).into(header.findViewById<CircleImageView>(R.id.NavProfile))
+                    drawer.findViewById<TextView>(R.id.NavName).text = user!!.getUsername()
+                    drawer.findViewById<TextView>(R.id.NavPhone).text = user.getPhone()
+                    Picasso.get().load(user.getProfile()).into(drawer.findViewById<CircleImageView>(R.id.NavProfile))
 
                     val tabLayout: TabLayout = findViewById(R.id.tab_layout_main)
                     val viewPager: ViewPager = findViewById(R.id.view_pager_main)
@@ -118,14 +127,28 @@ class MainActivity : AppCompatActivity() {
                     viewPagerAdater.addFragment(ChatsFragment(), "Recent Chats")
                     viewPager.adapter = viewPagerAdater
                     tabLayout.setupWithViewPager(viewPager)
+
+                    drawer.findViewById<CircleImageView>(R.id.NavProfile).setOnClickListener {
+                        val intent =  Intent(this@MainActivity, SettingsActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                        if(Admin){
+                            intent.putExtra("admin", firebaseUser!!.uid)
+                        }
+                        startActivity(intent)
+                        finish()
+                    }
+
+                    drawer.findViewById<ImageView>(R.id.backMain).setOnClickListener {
+                        onBackPressed()
+                    }
                 }
 
                 if(Admin==false) {
-                    menu_main.findItem(R.id.nav_manage_users).setVisible(false)
-                    menu_main.findItem(R.id.nav_all_complaints).setVisible(false)
-                    menu_main.findItem(R.id.nav_create_group).setVisible(false)
-                    menu_main.findItem(R.id.nav_manage_group).setVisible(false)
-                    menu_main.findItem(R.id.nav_manage_complaints_groups).setVisible(false)
+                    menuHam.findItem(R.id.nav_manage_users).setVisible(false)
+                    menuHam.findItem(R.id.nav_all_complaints).setVisible(false)
+                    menuHam.findItem(R.id.nav_create_group).setVisible(false)
+                    menuHam.findItem(R.id.nav_manage_group).setVisible(false)
+                    menuHam.findItem(R.id.nav_manage_complaints_groups).setVisible(false)
 
                     val tabLayout: TabLayout = findViewById(R.id.tab_layout_main)
                     val viewPager: ViewPager = findViewById(R.id.view_pager_main)
@@ -144,9 +167,23 @@ class MainActivity : AppCompatActivity() {
 
                                 //user_name.text = user!!.getUsername()
                                 //Picasso.get().load(user.getProfile()).placeholder(R.drawable.profile_image).into(profile_image_settings)
-                                header.findViewById<TextView>(R.id.NavName).text = user!!.getUsername()
-                                header.findViewById<TextView>(R.id.NavPhone).text = user.getPhone()
-                                Picasso.get().load(user.getProfile()).into(header.findViewById<CircleImageView>(R.id.NavProfile))
+                                drawer.findViewById<TextView>(R.id.NavName).text = user!!.getUsername()
+                                drawer.findViewById<TextView>(R.id.NavPhone).text = user.getPhone()
+                                Picasso.get().load(user.getProfile()).into(drawer.findViewById<CircleImageView>(R.id.NavProfile))
+
+                                drawer.findViewById<CircleImageView>(R.id.NavProfile).setOnClickListener {
+                                    val intent =  Intent(this@MainActivity, SettingsActivity::class.java)
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    if(Admin){
+                                        intent.putExtra("admin", firebaseUser!!.uid)
+                                    }
+                                    startActivity(intent)
+                                    finish()
+                                }
+
+                                drawer.findViewById<ImageView>(R.id.backMain).setOnClickListener {
+                                    onBackPressed()
+                                }
                             }
                         }
 
@@ -162,18 +199,6 @@ class MainActivity : AppCompatActivity() {
                 TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
         })
-
-        header.findViewById<CircleImageView>(R.id.NavProfile).setOnClickListener {
-            val intent =  Intent(this@MainActivity, SettingsActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-            if(Admin){
-                intent.putExtra("admin", firebaseUser!!.uid)
-            }
-            startActivity(intent)
-            finish()
-        }
-
-        addMenuItems(menu_main)  //add menu itemclicklistener
 
         //check for updates
         val versionName = BuildConfig.VERSION_NAME
@@ -207,111 +232,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun addMenuItems(menuMain: Menu) {
-        menuMain.findItem(R.id.nav_manage_group).setOnMenuItemClickListener {
-            val intent =  Intent(this@MainActivity, all_broadcast::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
-            finish()
-            true
-        }
 
-        menuMain.findItem(R.id.nav_create_group).setOnMenuItemClickListener {
-            val intent =  Intent(this@MainActivity, create_broadcast::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
-            finish()
-            true
-        }
-
-        menuMain.findItem(R.id.nav_setting).setOnMenuItemClickListener {
-            val intent = Intent(this@MainActivity, SettingsActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
-            finish()
-            true
-        }
-
-        menuMain.findItem(R.id.nav_my_complaints).setOnMenuItemClickListener {
-            val intent = Intent(this@MainActivity, MyPostsActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
-            finish()
-            true
-        }
-
-        menuMain.findItem(R.id.nav_new_complaint).setOnMenuItemClickListener {
-            val intent = Intent(this@MainActivity, CreatePost::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
-            finish()
-            true
-        }
-
-        menuMain.findItem(R.id.nav_all_complaints).setOnMenuItemClickListener {
-            val intent = Intent(this@MainActivity, ViewAllComplaints::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
-            finish()
-            true
-        }
-
-        menuMain.findItem(R.id.nav_manage_users).setOnMenuItemClickListener {
-            val intent = Intent(this@MainActivity, manageUsers::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
-            finish()
-            true
-        }
-
-        menuMain.findItem(R.id.nav_feedback).setOnMenuItemClickListener {
-            val intent = Intent(this@MainActivity, FeedBack::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
-            finish()
-            true
-        }
-
-        menuMain.findItem(R.id.nav_terms).setOnMenuItemClickListener {
-            val intent = Intent(this@MainActivity, Terms::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
-            finish()
-            true
-        }
-
-        menuMain.findItem(R.id.nav_about).setOnMenuItemClickListener {
-            val intent = Intent(this@MainActivity, AboutUs::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
-            finish()
-            true
-        }
-
-        menuMain.findItem(R.id.nav_updates).setOnMenuItemClickListener {
-            val intent = Intent(this@MainActivity, CheckUpdates::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
-            finish()
-            true
-        }
-
-        menuMain.findItem(R.id.nav_manage_complaints_groups).setOnMenuItemClickListener {
-            val intent = Intent(this@MainActivity, ManageUserGroup::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
-            finish()
-            true
-        }
-
-        menuMain.findItem(R.id.nav_share).setOnMenuItemClickListener {
-            var api: ApplicationInfo = applicationContext.applicationInfo
-            var apkPath = api.sourceDir
-            var intent: Intent = Intent(Intent.ACTION_SEND)
-            intent.setType("application/vnd.android.package-archive")
-            intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(File(apkPath)))
-            startActivity(Intent.createChooser(intent, "ShareVia"))
-            false
-        }
 
     }
 
@@ -361,6 +282,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
+        if (toggle.onOptionsItemSelected(item)) {
+            return true
+        }
+
         return when (item.itemId) {
             R.id.log_out -> {
                 if(Admin){
@@ -388,6 +313,130 @@ class MainActivity : AppCompatActivity() {
                 true
             }
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
+        toggle.syncState()
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+
+            R.id.nav_view_admin -> {
+                if (AdminUid!!.length > 2) {
+                    val intent = Intent(this@MainActivity, viewInfo::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                    intent.putExtra("visit_uid", AdminUid)
+                    intent.putExtra("admin", "admin")
+                    startActivity(intent)
+                    finish()
+                }
+            }
+
+            R.id.nav_manage_group -> {
+                val intent = Intent(this@MainActivity, all_broadcast::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+                finish()
+            }
+
+            R.id.nav_create_group ->  {
+                val intent = Intent(this@MainActivity, create_broadcast::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+                finish()
+            }
+
+            R.id.nav_setting -> {
+                val intent = Intent(this@MainActivity, SettingsActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+                finish()
+            }
+
+            R.id.nav_my_complaints -> {
+                val intent = Intent(this@MainActivity, MyPostsActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+                finish()
+            }
+
+            R.id.nav_new_complaint -> {
+                val intent = Intent(this@MainActivity, CreatePost::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+                finish()
+            }
+
+            R.id.nav_all_complaints -> {
+                val intent = Intent(this@MainActivity, ViewAllComplaints::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+                finish()
+            }
+
+            R.id.nav_manage_users ->  {
+                val intent = Intent(this@MainActivity, manageUsers::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+                finish()
+            }
+
+            R.id.nav_feedback  ->  {
+                val intent = Intent(this@MainActivity, FeedBack::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+                finish()
+            }
+
+            R.id.nav_terms ->  {
+                val intent = Intent(this@MainActivity, Terms::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+                finish()
+            }
+
+            R.id.nav_about -> {
+                val intent = Intent(this@MainActivity, AboutUs::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+                finish()
+            }
+
+            R.id.nav_updates ->  {
+                val intent = Intent(this@MainActivity, CheckUpdates::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+                finish()
+            }
+
+            R.id.nav_manage_complaints_groups -> {
+                val intent = Intent(this@MainActivity, ManageUserGroup::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+                finish()
+            }
+
+            R.id.nav_share -> {
+                var api: ApplicationInfo = applicationContext.applicationInfo
+                var apkPath = api.sourceDir
+                var intent: Intent = Intent(Intent.ACTION_SEND)
+                intent.setType("application/vnd.android.package-archive")
+                intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(File(apkPath)))
+                startActivity(Intent.createChooser(intent, "ShareVia"))
+            }
+        }
+        drawer.closeDrawer(GravityCompat.START)
+        return true
+    }
+
+    override fun onBackPressed() {
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
         }
     }
 }

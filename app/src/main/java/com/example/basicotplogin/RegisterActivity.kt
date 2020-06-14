@@ -20,6 +20,7 @@ class RegisterActivity : AppCompatActivity() {
     private var Username: String = ""
     private var Contact_no: String = "+91"
     private var Address: String = ""
+    private var Bio: String = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,6 +46,7 @@ class RegisterActivity : AppCompatActivity() {
         Username = username_register.text.toString()
         Contact_no += contact_no_register.text.toString()
         Address = Address_register.text.toString()
+        Bio = Bio_register.text.toString()
 
         var refUserAdmin = FirebaseDatabase.getInstance().reference.child("Admin")
         refUserAdmin.addListenerForSingleValueEvent( object : ValueEventListener {
@@ -62,6 +64,7 @@ class RegisterActivity : AppCompatActivity() {
                     intent.putExtra("username", Username)
                     intent.putExtra("contact", Contact_no)
                     intent.putExtra("address", Address)
+                    intent.putExtra("bio", Bio)
                     startActivity(intent)
                     finish()
                 }

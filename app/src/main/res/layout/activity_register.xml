@@ -10,22 +10,20 @@
         android:id="@+id/toolbar_register"
         android:layout_width="match_parent"
         android:layout_height="66dp"
-        android:background="#E4E4E4"
+        android:background="#5D91AF"
+        app:theme="@style/ToolbarTheme"
         app:layout_constraintTop_toTopOf="parent">
-
-
     </androidx.appcompat.widget.Toolbar>
 
     <EditText
         android:id="@+id/username_register"
         android:layout_width="297dp"
         android:layout_height="64dp"
-        android:layout_marginStart="56dp"
-        android:layout_marginLeft="56dp"
         android:layout_marginTop="108dp"
         android:ems="10"
         android:hint="UserName"
         android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -33,27 +31,37 @@
         android:id="@+id/contact_no_register"
         android:layout_width="293dp"
         android:layout_height="63dp"
-        android:layout_marginStart="56dp"
-        android:layout_marginLeft="56dp"
-        android:layout_marginTop="52dp"
+        android:layout_marginTop="25dp"
         android:ems="10"
         android:hint="Contact Number"
         android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/username_register" />
 
     <EditText
-        android:id="@+id/Address_register"
+        android:id="@+id/Bio_register"
         android:layout_width="299dp"
         android:layout_height="84dp"
-        android:layout_marginStart="56dp"
-        android:layout_marginLeft="56dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="25dp"
+        android:ems="10"
+        android:hint="Describe Yourself"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/contact_no_register" />
+
+    <EditText
+        android:id="@+id/Address_register"
+        android:layout_width="299dp"
+        android:layout_height="63dp"
+        android:layout_marginTop="25dp"
         android:ems="10"
         android:hint="Address"
         android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/contact_no_register" />
+        app:layout_constraintTop_toBottomOf="@+id/Bio_register" />
 
     <Button
         android:id="@+id/Register_OTP_btn"

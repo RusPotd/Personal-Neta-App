@@ -11,7 +11,8 @@
         android:id="@+id/toolbar_login"
         android:layout_width="match_parent"
         android:layout_height="66dp"
-        android:background="#E4E4E4">
+        app:theme="@style/ToolbarTheme"
+        android:background="#5D91AF">
 
 
     </androidx.appcompat.widget.Toolbar>

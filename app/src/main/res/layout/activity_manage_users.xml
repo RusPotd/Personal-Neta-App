@@ -10,7 +10,8 @@
         android:id="@+id/manage_users_toolbar"
         android:layout_width="match_parent"
         android:layout_height="66dp"
-        android:background="#E4E4E4"
+        android:background="#5D91AF"
+        app:theme="@style/ToolbarTheme"
         android:gravity="center_horizontal"
         />
 

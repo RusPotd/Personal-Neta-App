@@ -53,6 +53,11 @@ class MyFirebaseMessaging : FirebaseMessagingService()
         if(title.equals("New_Post")){
             intent = Intent(this, MainActivity::class.java)
         }
+        else if(title.equals("User_Interested")){
+            intent = Intent(this, MainActivity::class.java)
+            intent.putExtra("interestedUser", "null")
+            intent.putExtra("location", body)   //post ID
+        }
         else{
             intent = Intent(this, MessageChatActivity::class.java)
             val bundle = Bundle()
@@ -95,7 +100,7 @@ class MyFirebaseMessaging : FirebaseMessagingService()
 
         var intent: Intent? = null
 
-        if(title.equals("New_Post")){
+        if(title.equals("New_Post") or title.equals("User_Interested")){
             intent = Intent(this, MainActivity::class.java)
         }
         else{

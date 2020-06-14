@@ -11,7 +11,8 @@
         android:id="@+id/toolbar_messageChat_post"
         android:layout_width="match_parent"
         android:layout_height="66dp"
-        android:background="#E4E4E4"
+        android:background="#5D91AF"
+        app:theme="@style/ToolbarTheme"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="16dp">
 
@@ -25,13 +26,13 @@
 
         </TextView>
 
-
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_chats_post"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="8dp"
         android:layout_above="@id/chats_bar_post"
         android:layout_below="@id/toolbar_messageChat_post"
         tools:ignore="MissingConstraints"

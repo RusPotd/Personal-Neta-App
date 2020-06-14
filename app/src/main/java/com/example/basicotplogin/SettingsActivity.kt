@@ -80,12 +80,11 @@ class SettingsActivity : AppCompatActivity() {
                             enteredPhone.setText(user.getPhone())
                             enteredAddress.setText(user.getAddress())
                             Picasso.get().load(user.getProfile()).into(profile_image_settings)
+                            enteredBio.setText(user.getBio())
                         }
                     }
 
-                    override fun onCancelled(p0: DatabaseError) {
-
-                    }
+                    override fun onCancelled(p0: DatabaseError) {}
 
                 })
             }
@@ -99,6 +98,7 @@ class SettingsActivity : AppCompatActivity() {
             mapUsername["phone"] = enteredPhone.text.toString()
             mapUsername["address"] = enteredAddress.text.toString()
             mapUsername["search"] = enteredUsername.text.toString().toLowerCase()
+            mapUsername["bio"] = enteredBio.text.toString()
             refUsers!!.updateChildren(mapUsername)
             if(checkAdmin){
                 refAdmin!!.updateChildren(mapUsername)

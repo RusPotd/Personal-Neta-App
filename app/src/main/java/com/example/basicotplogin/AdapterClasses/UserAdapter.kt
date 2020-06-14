@@ -18,6 +18,7 @@ import com.example.basicotplogin.MessageChatActivity
 import com.squareup.picasso.Picasso
 import com.example.basicotplogin.ModelClasses.Users
 import com.example.basicotplogin.R
+import com.example.basicotplogin.viewInfo
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -98,26 +99,31 @@ class UserAdapter (mContext: Context,
                 builder.show()
             }
         }
-        else {
-            holder.itemView.setOnClickListener {
-                val option = arrayOf<CharSequence>(
-                    "Send Message",
-                    "Visit Profile"
-                )
-                val builder: AlertDialog.Builder = AlertDialog.Builder(mContext)
-                builder.setTitle("What do u want?")
-                builder.setItems(option, DialogInterface.OnClickListener { dialog, position ->
-                    if (position == 0) {
-                        val intent = Intent(mContext, MessageChatActivity::class.java)
-                        intent.putExtra("visit_id", user.getUID())
-                        mContext.startActivity(intent)
-                    }
-                    if (position == 1) {
+        else{
+            holder.deleteUserBtn.visibility = View.GONE
+        }
 
-                    }
-                })
-                builder.show()
-            }
+        holder.itemView.setOnClickListener {
+            val option = arrayOf<CharSequence>(
+                "Send Message",
+                "Visit Profile"
+            )
+            val builder: AlertDialog.Builder = AlertDialog.Builder(mContext)
+            builder.setTitle("What do u want?")
+            builder.setItems(option, DialogInterface.OnClickListener { dialog, position ->
+                if (position == 0) {
+                    val intent = Intent(mContext, MessageChatActivity::class.java)
+                    intent.putExtra("visit_id", user.getUID())
+                    mContext.startActivity(intent)
+                }
+                if (position == 1) {
+                    val intent = Intent(mContext, viewInfo::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                    intent.putExtra("visit_uid", user.getUID().toString())
+                    mContext.startActivity(intent)
+                }
+            })
+            builder.show()
         }
     }
 

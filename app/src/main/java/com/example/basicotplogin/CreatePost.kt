@@ -63,7 +63,7 @@ class CreatePost : AppCompatActivity() {
     var senderImage: String = ""
     var senderName: String = ""
     var apiService: APIService? = null
-    var userIdVisit: String = "y33x7HMMKMRIIJn4XTI5YH1Xzv12" //"y33x7HMMKMRIIJn4XTI5YH1Xzv12"    //must change to every individual in users of perticular id
+    var userIdVisit: String = "JRomE1xpxqNJ70g8bum87hXVGJk1" //adminUID    //must change to every individual in users of perticular id
     var broadCastUsers: ArrayList<String> = ArrayList()
     var broadcastName : String = "public"
     var checkAdmin: Boolean = false
@@ -238,8 +238,8 @@ class CreatePost : AppCompatActivity() {
 
         refPosts!!.child("Posts").child(firebaseUser!!.uid).child(postId!!).updateChildren(mapUsername).addOnCompleteListener {
             Toast.makeText(this@CreatePost, "Post Published", Toast.LENGTH_LONG).show()
-            /*if(checkAdmin){
-                if(gotList){
+            if(checkAdmin){
+                /*if(gotList){
                     var AllUsers = my_dict!![broadcastName]
                     Log.i("\n\n\nAllUsers : ", "$AllUsers\n\n\n")
                     for (MainItem in AllUsers!!){
@@ -251,11 +251,11 @@ class CreatePost : AppCompatActivity() {
                 else {
                     var AllUsers = my_dict!![broadcastName]
                     Log.i("\n\n\nAllUsers : ", "Not found\n\n\n")
-                }
+                }*/
             }
             else{
-                sendNotification(AdminUID, senderName, "Uploaded New Post")
-            }*/
+                sendNotification(AdminUID, senderName, " Registered Complaint")
+            }
             val intent =  Intent(this@CreatePost, MainActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
@@ -332,7 +332,7 @@ class CreatePost : AppCompatActivity() {
                         R.mipmap.ic_launcher,
                         "$username: $msg",
                         "New_Post",
-                        userIdVisit
+                        receiverId
                     )
 
                     val sender = Sender(data, token!!.getToken().toString())
@@ -370,6 +370,7 @@ class CreatePost : AppCompatActivity() {
         })
     }
 
+    /*
     internal inner class CallNotify : AsyncTask<String, Void, String>(){
 
         override fun doInBackground(vararg AllUsers: String?): String {
@@ -383,5 +384,5 @@ class CreatePost : AppCompatActivity() {
         override fun onPostExecute(result: String?) {
             super.onPostExecute(result)
         }
-    }
+    }*/  //background task to send notification to all users
 }

@@ -8,12 +8,13 @@ class Users {
     private var  username : String = ""
     private var phone : String = ""
     private var address : String = ""
+    private var bio: String = ""
 
 
 
     constructor()
 
-    constructor(uid: String, profile: String, status: String, search: String, username: String, phone: String, address: String) {
+    constructor(uid: String, profile: String, status: String, search: String, username: String, phone: String, address: String, bio: String) {
         this.uid = uid
         this.profile = profile
         this.status = status
@@ -21,7 +22,7 @@ class Users {
         this.username = username
         this.phone = phone
         this.address = address
-
+        this.bio = bio
     }
 
     fun getUID(): String?{
@@ -78,6 +79,14 @@ class Users {
 
     fun setAddress(address: String){
         this.address = address
+    }
+
+    fun getBio(): String?{
+        return bio
+    }
+
+    fun setBio(bio: String){
+        this.bio = bio
     }
 
 
