@@ -49,7 +49,7 @@
             android:id="@+id/resend_otp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Verify OTP"
+            android:text="Resend OTP"
             android:layout_marginLeft="50dp"
             android:layout_toRightOf="@id/verify_otp" />
         </LinearLayout>

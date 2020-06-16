@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ListView
+import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import com.example.basicotplogin.ModelClasses.BroadCast
 import com.google.firebase.database.*
@@ -46,7 +47,6 @@ class ManageUserGroup : AppCompatActivity() {
                 for (snapShot in p0.children){
                     var broadCast: BroadCast? = snapShot.getValue(BroadCast::class.java)
                     broadcastList.add(broadCast!!.getName().toString())
-
                 }
                 adapter = ArrayAdapter(this@ManageUserGroup, android.R.layout.simple_list_item_1, broadcastList)
                 listView.adapter = adapter
@@ -78,10 +78,16 @@ class ManageUserGroup : AppCompatActivity() {
 
         enter_user_group_btn.setOnClickListener {
             var broadCastName = enter_user_group_txt.text!!.toString()
-            var mapUsername = HashMap<String, Any>()
-            mapUsername["name"] = broadCastName!!
-            FirebaseDatabase.getInstance().reference.child("UserPostCategory").child(broadCastName).updateChildren(mapUsername)
-            enter_user_group_txt.setText("")
+            if(broadCastName.trim().isNotEmpty()) {
+                var mapUsername = HashMap<String, Any>()
+                mapUsername["name"] = broadCastName!!
+                FirebaseDatabase.getInstance().reference.child("UserPostCategory")
+                    .child(broadCastName).updateChildren(mapUsername)
+                enter_user_group_txt.setText("")
+            }
+            else{
+                Toast.makeText(this@ManageUserGroup, "Category Name must not be blank", Toast.LENGTH_LONG).show()
+            }
         }
     }
 }

@@ -8,6 +8,7 @@ import android.text.TextWatcher
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -54,38 +55,43 @@ class create_broadcast : AppCompatActivity() {
         var editButton = findViewById<Button>(R.id.enter_broadcast_name_btn)
         editButton.setOnClickListener {
             broadCastName = editText.text.toString()
-            broadcast_name.setText(broadCastName)
-            toolbar.title = ""
-            editButton.visibility = View.GONE
-            editText.visibility = View.GONE
-            broadcast_name.visibility = View.VISIBLE
-            post_broadcast_btn.visibility = View.VISIBLE
-            hidden_layout.visibility = View.VISIBLE
+            if(broadCastName.trim().isNotEmpty()) {
+                broadcast_name.setText(broadCastName)
+                toolbar.title = ""
+                editButton.visibility = View.GONE
+                editText.visibility = View.GONE
 
-            recylerView = findViewById(R.id.all_users)
-            recylerView!!.setHasFixedSize(true)
-            recylerView!!.layoutManager = LinearLayoutManager(applicationContext)
+                broadcast_name.visibility = View.VISIBLE
+                post_broadcast_btn.visibility = View.VISIBLE
+                hidden_layout.visibility = View.VISIBLE
 
-            mUsers = ArrayList()
-            retrieveAllUsers(broadCastName)
+                recylerView = findViewById(R.id.all_users)
+                recylerView!!.setHasFixedSize(true)
+                recylerView!!.layoutManager = LinearLayoutManager(applicationContext)
 
-            post_broadcast_btn.setOnClickListener{
-                var mapUsername = HashMap<String, Any>()
-                mapUsername["name"] = broadCastName
-                FirebaseDatabase.getInstance().reference.child("Broadcasts").child(broadCastName).updateChildren(mapUsername)
-                mapUsername = HashMap<String, Any>()
-                mapUsername["id"] = FirebaseAuth.getInstance().currentUser!!.uid
-                FirebaseDatabase.getInstance().reference.child("BroadCastDetails").child(broadCastName).child(FirebaseAuth.getInstance().currentUser!!.uid).updateChildren(mapUsername)
-                val intent =  Intent(this@create_broadcast, all_broadcast::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
-                finish()
+                mUsers = ArrayList()
+                retrieveAllUsers(broadCastName)
+
+                post_broadcast_btn.setOnClickListener {
+                    var mapUsername = HashMap<String, Any>()
+                    mapUsername["name"] = broadCastName
+                    FirebaseDatabase.getInstance().reference.child("Broadcasts")
+                        .child(broadCastName).updateChildren(mapUsername)
+                    mapUsername = HashMap<String, Any>()
+                    mapUsername["id"] = FirebaseAuth.getInstance().currentUser!!.uid
+                    FirebaseDatabase.getInstance().reference.child("BroadCastDetails")
+                        .child(broadCastName).child(FirebaseAuth.getInstance().currentUser!!.uid)
+                        .updateChildren(mapUsername)
+                    val intent = Intent(this@create_broadcast, all_broadcast::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                    finish()
+                }
+            }
+            else{
+                Toast.makeText(this@create_broadcast, "Broadcast name should not be empty!!!", Toast.LENGTH_LONG).show()
             }
         }
-
-
-
-
     }
 
     private fun retrieveAllUsers(broadCastName : String) {

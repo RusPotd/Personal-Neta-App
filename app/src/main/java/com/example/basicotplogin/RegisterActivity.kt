@@ -48,36 +48,37 @@ class RegisterActivity : AppCompatActivity() {
         Address = Address_register.text.toString()
         Bio = Bio_register.text.toString()
 
-        if(contact_no_register.text.length>10){
-            Toast.makeText(this, "Enter only 10 digit number", Toast.LENGTH_LONG).show()
-            return
+        if(!contact_no_register.text.length.equals(10)){
+            contact_no_register.setError("Enter 10 digit number")
+            contact_no_register.requestFocus()
         }
-        if(username_register.text.length>16){
-            Toast.makeText(this, "Username is too long!!! Atmost 16 letters allowed", Toast.LENGTH_LONG).show()
-            return
+        else if(Username.length>16 || Username.trim().isEmpty()){
+            username_register.setError("Either Username is null or It's too long!!! Atmost 16 letters allowed")
+            username_register.requestFocus()
         }
+        else{
+            var refUserAdmin = FirebaseDatabase.getInstance().reference.child("Admin")
+            refUserAdmin.addListenerForSingleValueEvent( object : ValueEventListener {
+                override fun onCancelled(p0: DatabaseError) {}
 
-        var refUserAdmin = FirebaseDatabase.getInstance().reference.child("Admin")
-        refUserAdmin.addListenerForSingleValueEvent( object : ValueEventListener {
-            override fun onCancelled(p0: DatabaseError) {}
-
-            @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-            override fun onDataChange(p0: DataSnapshot) {
-                if (p0.child("phone").value!!.equals(Contact_no) && p0.child("logged").value!!.equals("true")) {
-                    Toast.makeText(this@RegisterActivity, "You are already registered from another Device", Toast.LENGTH_LONG).show()
-                    FirebaseAuth.getInstance().signOut()
-                    finishAndRemoveTask();
+                @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+                override fun onDataChange(p0: DataSnapshot) {
+                    if (p0.child("phone").value!!.equals(Contact_no) && p0.child("logged").value!!.equals("true")) {
+                        Toast.makeText(this@RegisterActivity, "You are already registered from another Device", Toast.LENGTH_LONG).show()
+                        FirebaseAuth.getInstance().signOut()
+                        finishAndRemoveTask();
+                    }
+                    else{
+                        val intent =  Intent(this@RegisterActivity, OTP_Checker::class.java)
+                        intent.putExtra("username", Username)
+                        intent.putExtra("contact", Contact_no)
+                        intent.putExtra("address", Address)
+                        intent.putExtra("bio", Bio)
+                        startActivity(intent)
+                        finish()
+                    }
                 }
-                else{
-                    val intent =  Intent(this@RegisterActivity, OTP_Checker::class.java)
-                    intent.putExtra("username", Username)
-                    intent.putExtra("contact", Contact_no)
-                    intent.putExtra("address", Address)
-                    intent.putExtra("bio", Bio)
-                    startActivity(intent)
-                    finish()
-                }
-            }
-        })
+            })
+        }
     }
 }

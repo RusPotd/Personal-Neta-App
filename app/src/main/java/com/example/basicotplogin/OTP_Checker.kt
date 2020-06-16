@@ -86,9 +86,14 @@ class OTP_Checker : AppCompatActivity() {
     private fun SubmitOTP() {
         OTP = entered_otp.text.toString()
 
-        val credential = PhoneAuthProvider.getCredential(verificationId, OTP)
+        if(OTP.trim().isNotEmpty()) {
+            val credential = PhoneAuthProvider.getCredential(verificationId, OTP)
 
-        signInWithPhoneAuthCredential(credential)
+            signInWithPhoneAuthCredential(credential)
+        }
+        else{
+            Toast.makeText(this@OTP_Checker, "OTP must not be blank", Toast.LENGTH_LONG).show()
+        }
 
     }
 

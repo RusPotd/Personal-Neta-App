@@ -241,7 +241,7 @@ class PostAdapter (mContext: Context,
                 refLike.updateChildren(mapLikes)
                 var temp = user.getTime().toString().slice(0..10) //IntRange(0 to 3)
                 sendNotification(
-                    firebaseUser!!.displayName.toString() + " has shown Interest on Post : " + temp,
+                    firebaseUser!!.phoneNumber.toString() + " has shown Interest on Post : " + temp,
                     user.getPostId().toString()
                 )
         }
