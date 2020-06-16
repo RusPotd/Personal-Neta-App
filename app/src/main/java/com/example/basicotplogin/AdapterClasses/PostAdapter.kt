@@ -12,13 +12,10 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.example.basicotplogin.CreatePost
+import com.example.basicotplogin.*
 import com.example.basicotplogin.Fragments.APIService
 import com.example.basicotplogin.ModelClasses.Posts
 import com.example.basicotplogin.Notifications.*
-import com.example.basicotplogin.PostMsgChatActivity
-import com.example.basicotplogin.R
-import com.example.basicotplogin.viewInfo
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -194,14 +191,22 @@ class PostAdapter (mContext: Context,
             override fun onCancelled(p0: DatabaseError) {}
 
             override fun onDataChange(p0: DataSnapshot) {
-                if (p0.hasChild(firebaseUser!!.uid)){
-                    holder.hand_display!!.setImageResource(R.drawable.handup)
-                    holder.hand_display_txt!!.setText("Interested")
-                    holder.hand_display_txt!!.setTextColor(Color.BLUE)
+
+                if(isAdmin){
+                    holder.hand_display!!.setImageResource(R.drawable.hand)
+                    holder.hand_display_txt!!.setText("Show Interested's List")
+                    holder.hand_display_txt!!.setTextColor(Color.BLACK)
                 }
                 else{
-                    holder.hand_display!!.setImageResource(R.drawable.hand)
-                    holder.hand_display_txt!!.setTextColor(Color.BLACK)
+                    if (p0.hasChild(firebaseUser!!.uid)){
+                        holder.hand_display!!.setImageResource(R.drawable.handup)
+                        holder.hand_display_txt!!.setText("Interested")
+                        holder.hand_display_txt!!.setTextColor(Color.BLUE)
+                    }
+                    else{
+                        holder.hand_display!!.setImageResource(R.drawable.hand)
+                        holder.hand_display_txt!!.setTextColor(Color.BLACK)
+                    }
                 }
             }
         })
@@ -229,6 +234,13 @@ class PostAdapter (mContext: Context,
         }
 
         holder.raise_hand_bar!!.setOnClickListener {
+            if(isAdmin){
+                val intent = Intent(mContext, InterestedUsersShow::class.java)
+                intent.putExtra("id", user.getPostId())
+                intent.putExtra("time", user.getTime().toString().slice(0..10))
+                mContext.startActivity(intent)
+            }
+            else{
                 holder.hand_display!!.setImageResource(R.drawable.handup)
                 holder.hand_display_txt!!.setText("Interested")
                 holder.hand_display_txt!!.setTextColor(Color.BLUE)
@@ -244,6 +256,7 @@ class PostAdapter (mContext: Context,
                     firebaseUser!!.phoneNumber.toString() + " has shown Interest on Post : " + temp,
                     user.getPostId().toString()
                 )
+            }
         }
 
         holder.chatSender!!.setOnClickListener {
