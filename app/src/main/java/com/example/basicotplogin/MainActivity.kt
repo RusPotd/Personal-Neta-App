@@ -13,6 +13,7 @@ import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
 import android.os.StrictMode
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -46,7 +47,7 @@ import de.hdodenhof.circleimageview.CircleImageView
 import java.io.File
 
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener{
 
     var refUsers: DatabaseReference? = null
     var refuserContact: String = ""
@@ -97,10 +98,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawer = findViewById(R.id.drawer_layout)
         var NavView = drawer.findViewById<NavigationView>(R.id.nav_view)
         menuHam = NavView.menu
+        menuHam.setGroupVisible(R.id.user_group, false)
+        menuHam.setGroupVisible(R.id.admin_group, false)
         toggle = ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawer.addDrawerListener(toggle)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
+
 
         refAdmin = FirebaseDatabase.getInstance().reference.child("Admin")
         //CHeck Admin
@@ -109,9 +113,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 AdminUid = p0.child("uid").value.toString()
                 if(p0.child("uid").value!!.equals(firebaseUser!!.uid)){
                     Admin = true
+                    menuHam.setGroupVisible(R.id.admin_group, true)
+                    /*
                     menuHam.findItem(R.id.nav_view_admin).setVisible(false)
                     menuHam.findItem(R.id.nav_new_complaint).setVisible(false)
-                    menuHam.findItem(R.id.nav_my_complaints).setVisible(false)
+                    menuHam.findItem(R.id.nav_my_complaints).setVisible(false)*/
                     val user: Users? = p0.getValue(Users::class.java)       //create user of instance Users class
                     //user_name.text = user!!.getUsername()
                     //Picasso.get().load(user.getProfile()).placeholder(R.drawable.profile_image).into(profile_image_settings)
@@ -144,11 +150,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
 
                 if(Admin==false) {
-                    menuHam.findItem(R.id.nav_manage_users).setVisible(false)
+                    /*menuHam.findItem(R.id.nav_manage_users).setVisible(false)
                     menuHam.findItem(R.id.nav_all_complaints).setVisible(false)
                     menuHam.findItem(R.id.nav_create_group).setVisible(false)
                     menuHam.findItem(R.id.nav_manage_group).setVisible(false)
-                    menuHam.findItem(R.id.nav_manage_complaints_groups).setVisible(false)
+                    menuHam.findItem(R.id.nav_manage_complaints_groups).setVisible(false)*/
+                    menuHam.setGroupVisible(R.id.user_group, true)
 
                     val tabLayout: TabLayout = findViewById(R.id.tab_layout_main)
                     val viewPager: ViewPager = findViewById(R.id.view_pager_main)
@@ -224,6 +231,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if(isNetworkAvailable().equals(null) or isNetworkAvailable().equals(false)){
             Toast.makeText(this@MainActivity, "This app requires Internet access!! Please Check Connection", Toast.LENGTH_LONG).show()
         }
+
+        Thread.setDefaultUncaughtExceptionHandler { thread, e ->
+            this.recreate()
+        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int,
@@ -242,7 +253,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     {
         val firebaseUser = FirebaseAuth.getInstance().currentUser
         val token = Token(refreshToken!!)
-        val ref = FirebaseDatabase.getInstance().getReference().child("Tokens").child(firebaseUser!!.uid).setValue(token)
+        FirebaseDatabase.getInstance().getReference().child("Tokens").child(firebaseUser!!.uid).setValue(token)
     }
 
     internal class ViewPagerAdapter(fragmentManager: FragmentManager) :
@@ -285,8 +296,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun isNetworkAvailable(): Boolean {
         val connectivityManager: ConnectivityManager =
             getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetworkInfo: NetworkInfo = connectivityManager.getActiveNetworkInfo()
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected()
+        try {
+            val activeNetworkInfo: NetworkInfo = connectivityManager.getActiveNetworkInfo()!!
+        }
+        catch(e: Exception){
+            return false
+        }
+        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

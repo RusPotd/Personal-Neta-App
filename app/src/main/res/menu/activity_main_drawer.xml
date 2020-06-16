@@ -5,6 +5,7 @@
     tools:showIn="navigation_view">
 
     <group android:checkableBehavior="single">
+        <group android:id="@+id/admin_group" android:title="Admin Panel">
         <item
             android:id="@+id/nav_manage_users"
             android:icon="@drawable/users"
@@ -25,6 +26,10 @@
             android:id="@+id/nav_manage_group"
             android:icon="@drawable/manage_group"
             android:title="All Broadcasts" />
+
+        </group>
+
+        <group android:id="@+id/user_group" android:title="User Panel">
         <item
             android:id="@+id/nav_view_admin"
             android:icon="@drawable/view_admin"
@@ -37,6 +42,8 @@
             android:id="@+id/nav_my_complaints"
             android:icon="@drawable/inbox"
             android:title="My Complaints" />
+        </group>
+
         <item
             android:id="@+id/nav_setting"
             android:icon="@drawable/settings"
