@@ -9,7 +9,7 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_otp"
         android:layout_width="match_parent"
-        android:layout_height="66dp"
+        android:layout_height="56dp"
         app:theme="@style/ToolbarTheme"
         android:background="#5D91AF">
 
@@ -31,12 +31,28 @@
             android:ems="10"
             android:hint="Enter OTP" />
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal"
+            >
+
         <Button
             android:id="@+id/verify_otp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
+            android:layout_alignParentLeft="true"
             android:text="Verify OTP" />
+
+        <Button
+            android:id="@+id/resend_otp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Verify OTP"
+            android:layout_marginLeft="50dp"
+            android:layout_toRightOf="@id/verify_otp" />
+        </LinearLayout>
 
     </LinearLayout>
 

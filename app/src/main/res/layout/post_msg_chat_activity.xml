@@ -10,7 +10,7 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_messageChat_post"
         android:layout_width="match_parent"
-        android:layout_height="66dp"
+        android:layout_height="56dp"
         android:background="#5D91AF"
         app:theme="@style/ToolbarTheme"
         app:layout_constraintTop_toTopOf="parent"

@@ -77,6 +77,10 @@ class OTP_Checker : AppCompatActivity() {
         verify_otp.setOnClickListener{
             SubmitOTP()
         }
+
+        resend_otp.setOnClickListener {
+            Send_OTP()
+        }
     }
 
     private fun SubmitOTP() {
@@ -122,7 +126,7 @@ class OTP_Checker : AppCompatActivity() {
 
                     if (task.exception is FirebaseAuthInvalidCredentialsException) {
                         // The verification code entered was invalid
-
+                        Toast.makeText(this@OTP_Checker, "Incorrect OTP", Toast.LENGTH_LONG).show()
                     }
                 }
             }

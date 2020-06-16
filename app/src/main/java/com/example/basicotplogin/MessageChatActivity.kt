@@ -158,13 +158,13 @@ class MessageChatActivity : AppCompatActivity() {
                     if(user!!.getSender().equals(firebaseUserID) && user.getReceiver().equals(userIdVisit)
                         || user.getReceiver().equals(firebaseUserID) && user.getSender().equals(userIdVisit))
                     {
-                        (mUserChats as ArrayList<ChatHist>).add(user!!)
+                        (mUserChats as ArrayList<ChatHist>).add(user)
 
                     }
 
                 }
                 try {
-                    userAdapter = ChatHistAdapter(this@MessageChatActivity!!, mUserChats!!, false)
+                    userAdapter = ChatHistAdapter(this@MessageChatActivity, mUserChats!!, false)
                     recylerView!!.smoothScrollToPosition(userAdapter!!.itemCount);
                     recylerView!!.adapter = userAdapter
                 }

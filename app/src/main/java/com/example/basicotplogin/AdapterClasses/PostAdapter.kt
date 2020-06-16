@@ -18,6 +18,7 @@ import com.example.basicotplogin.ModelClasses.Posts
 import com.example.basicotplogin.Notifications.*
 import com.example.basicotplogin.PostMsgChatActivity
 import com.example.basicotplogin.R
+import com.example.basicotplogin.viewInfo
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -240,7 +241,7 @@ class PostAdapter (mContext: Context,
                 refLike.updateChildren(mapLikes)
                 var temp = user.getTime().toString().slice(0..10) //IntRange(0 to 3)
                 sendNotification(
-                    user.getSenderName() + " has shown Interest on Post : " + temp,
+                    firebaseUser!!.displayName.toString() + " has shown Interest on Post : " + temp,
                     user.getPostId().toString()
                 )
         }
@@ -286,6 +287,15 @@ class PostAdapter (mContext: Context,
                 }
             })
             builder.show()
+        }
+
+        holder.userProfileImage!!.setOnClickListener {
+            val intent =  Intent(mContext, viewInfo::class.java)
+            if(user.getSenderId().equals("JRomE1xpxqNJ70g8bum87hXVGJk1")){
+                intent.putExtra("admin", "admin")
+            }
+            intent.putExtra("visit_uid", user.getSenderId())
+            mContext.startActivity(intent)
         }
 
     }

@@ -48,6 +48,15 @@ class RegisterActivity : AppCompatActivity() {
         Address = Address_register.text.toString()
         Bio = Bio_register.text.toString()
 
+        if(contact_no_register.text.length>10){
+            Toast.makeText(this, "Enter only 10 digit number", Toast.LENGTH_LONG).show()
+            return
+        }
+        if(username_register.text.length>16){
+            Toast.makeText(this, "Username is too long!!! Atmost 16 letters allowed", Toast.LENGTH_LONG).show()
+            return
+        }
+
         var refUserAdmin = FirebaseDatabase.getInstance().reference.child("Admin")
         refUserAdmin.addListenerForSingleValueEvent( object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {}

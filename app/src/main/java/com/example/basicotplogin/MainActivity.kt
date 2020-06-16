@@ -1,25 +1,24 @@
 package com.example.basicotplogin
 
 import android.Manifest
-import android.app.AlertDialog
-import android.content.DialogInterface
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.PorterDuff
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.net.Uri
-import android.os.Build
+import android.os.AsyncTask
 import android.os.Bundle
 import android.os.StrictMode
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -44,13 +43,13 @@ import com.google.firebase.database.*
 import com.google.firebase.iid.FirebaseInstanceId
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
-import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     var refUsers: DatabaseReference? = null
+    var refuserContact: String = ""
     var firebaseUser: FirebaseUser? = null
     var AdminUid: String? = null
     var refreshToken: String= ""
@@ -116,7 +115,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     val user: Users? = p0.getValue(Users::class.java)       //create user of instance Users class
                     //user_name.text = user!!.getUsername()
                     //Picasso.get().load(user.getProfile()).placeholder(R.drawable.profile_image).into(profile_image_settings)
-                    drawer.findViewById<TextView>(R.id.NavName).text = user!!.getUsername()
+                    refuserContact = user!!.getPhone().toString()
+                    drawer.findViewById<TextView>(R.id.NavName).text = user.getUsername()
                     drawer.findViewById<TextView>(R.id.NavPhone).text = user.getPhone()
                     Picasso.get().load(user.getProfile()).into(drawer.findViewById<CircleImageView>(R.id.NavProfile))
 
@@ -155,7 +155,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     val viewPagerAdater = ViewPagerAdapter(supportFragmentManager)
                     viewPagerAdater.addFragment(MainFragment(), "Home")
                     viewPager.adapter = viewPagerAdater
-                    tabLayout.setupWithViewPager(viewPager)
+                    tabLayout.visibility = View.GONE
+                    //tabLayout.setupWithViewPager(viewPager)
 
                     refUsers =
                         FirebaseDatabase.getInstance().reference.child("Users").child(firebaseUser!!.uid)
@@ -167,7 +168,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                                 //user_name.text = user!!.getUsername()
                                 //Picasso.get().load(user.getProfile()).placeholder(R.drawable.profile_image).into(profile_image_settings)
-                                drawer.findViewById<TextView>(R.id.NavName).text = user!!.getUsername()
+                                refuserContact = user!!.getPhone().toString()
+                                drawer.findViewById<TextView>(R.id.NavName).text = user.getUsername()
                                 drawer.findViewById<TextView>(R.id.NavPhone).text = user.getPhone()
                                 Picasso.get().load(user.getProfile()).into(drawer.findViewById<CircleImageView>(R.id.NavProfile))
 
@@ -217,6 +219,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         })
 
+        AsyncTaskExample(this@MainActivity).execute()
+
+        if(isNetworkAvailable().equals(null) or isNetworkAvailable().equals(false)){
+            Toast.makeText(this@MainActivity, "This app requires Internet access!! Please Check Connection", Toast.LENGTH_LONG).show()
+        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int,
@@ -229,11 +236,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
             }
         }
-    }
-
-    private fun addMenuItems(menuMain: Menu) {
-
-
     }
 
     private fun updateToken(refreshToken: String?)
@@ -278,6 +280,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.nav_menu_visiters, menu)
         return true
+    }
+
+    private fun isNetworkAvailable(): Boolean {
+        val connectivityManager: ConnectivityManager =
+            getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetworkInfo: NetworkInfo = connectivityManager.getActiveNetworkInfo()
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -439,4 +448,30 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             super.onBackPressed()
         }
     }
-}
+
+    inner class AsyncTaskExample(private var activity: MainActivity?) : AsyncTask<String, String, String>() {
+        override fun doInBackground(vararg params: String?): String {
+            var refBan = FirebaseDatabase.getInstance().reference.child("Banned")
+            refBan.addValueEventListener(object : ValueEventListener {
+                override fun onCancelled(p0: DatabaseError) {}
+
+                override fun onDataChange(p0: DataSnapshot) {
+                    for (element in p0.children){
+                        if(refuserContact.length>1) {
+                            if (element.key.toString().equals(refuserContact)) {
+                                Toast.makeText(
+                                    this@MainActivity,
+                                    "You have got banned from Admin, Please contact Admin",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                                FirebaseAuth.getInstance().signOut()
+                            }
+                        }
+                    }
+                }
+            })
+
+            return ""
+        }
+    }
+    }
