@@ -79,7 +79,7 @@ class SettingsActivity : AppCompatActivity() {
                             enteredUsername.setText(user!!.getUsername())
                             enteredPhone.setText(user.getPhone())
                             enteredAddress.setText(user.getAddress())
-                            Picasso.get().load(user.getProfile()).into(profile_image_settings)
+                            Picasso.get().load(user.getProfile().toString()).placeholder(R.drawable.profile_image).into(profile_image_settings)
                             enteredBio.setText(user.getBio())
                         }
                     }

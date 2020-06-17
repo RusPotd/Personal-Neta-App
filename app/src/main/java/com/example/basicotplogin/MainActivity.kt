@@ -42,6 +42,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import com.google.firebase.iid.FirebaseInstanceId
+import com.jakewharton.processphoenix.ProcessPhoenix
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import java.io.File
@@ -114,13 +115,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 if(p0.child("uid").value!!.equals(firebaseUser!!.uid)){
                     Admin = true
                     menuHam.setGroupVisible(R.id.admin_group, true)
-                    /*
-                    menuHam.findItem(R.id.nav_view_admin).setVisible(false)
-                    menuHam.findItem(R.id.nav_new_complaint).setVisible(false)
-                    menuHam.findItem(R.id.nav_my_complaints).setVisible(false)*/
+
                     val user: Users? = p0.getValue(Users::class.java)       //create user of instance Users class
-                    //user_name.text = user!!.getUsername()
-                    //Picasso.get().load(user.getProfile()).placeholder(R.drawable.profile_image).into(profile_image_settings)
+
                     refuserContact = user!!.getPhone().toString()
                     drawer.findViewById<TextView>(R.id.NavName).text = user.getUsername()
                     drawer.findViewById<TextView>(R.id.NavPhone).text = user.getPhone()
@@ -150,11 +147,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
 
                 if(Admin==false) {
-                    /*menuHam.findItem(R.id.nav_manage_users).setVisible(false)
-                    menuHam.findItem(R.id.nav_all_complaints).setVisible(false)
-                    menuHam.findItem(R.id.nav_create_group).setVisible(false)
-                    menuHam.findItem(R.id.nav_manage_group).setVisible(false)
-                    menuHam.findItem(R.id.nav_manage_complaints_groups).setVisible(false)*/
                     menuHam.setGroupVisible(R.id.user_group, true)
 
                     val tabLayout: TabLayout = findViewById(R.id.tab_layout_main)
@@ -173,8 +165,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                 val user: Users? =
                                     p0.getValue(Users::class.java)       //create user of instance Users class
 
-                                //user_name.text = user!!.getUsername()
-                                //Picasso.get().load(user.getProfile()).placeholder(R.drawable.profile_image).into(profile_image_settings)
                                 refuserContact = user!!.getPhone().toString()
                                 drawer.findViewById<TextView>(R.id.NavName).text = user.getUsername()
                                 drawer.findViewById<TextView>(R.id.NavPhone).text = user.getPhone()
@@ -196,17 +186,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                             }
                         }
 
-                        override fun onCancelled(p0: DatabaseError) {
-                            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                        }
+                        override fun onCancelled(p0: DatabaseError) {}
                     })
                 }
 
             }
 
-            override fun onCancelled(p0: DatabaseError) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-            }
+            override fun onCancelled(p0: DatabaseError) {}
         })
 
         //check for updates
@@ -226,14 +212,35 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         })
 
-        AsyncTaskExample(this@MainActivity).execute()
+        //check if user is banned!!!
+        var refBan = FirebaseDatabase.getInstance().reference.child("Banned")
+        refBan.addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {}
 
+            override fun onDataChange(p0: DataSnapshot) {
+                for (element in p0.children){
+                    if(refuserContact.length>1) {
+                        if (element.key.toString().equals(refuserContact)) {
+                            Toast.makeText(
+                                this@MainActivity,
+                                "You have got banned from Admin, Please contact Admin",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            FirebaseAuth.getInstance().signOut()
+                        }
+                    }
+                }
+            }
+        })
+
+        //check internet network access
         if(isNetworkAvailable().equals(null) or isNetworkAvailable().equals(false)){
             Toast.makeText(this@MainActivity, "This app requires Internet access!! Please Check Connection", Toast.LENGTH_LONG).show()
         }
 
+        //manage exceptions
         Thread.setDefaultUncaughtExceptionHandler { thread, e ->
-            this.recreate()
+            ProcessPhoenix.triggerRebirth(this@MainActivity);
         }
     }
 
@@ -465,29 +472,4 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    inner class AsyncTaskExample(private var activity: MainActivity?) : AsyncTask<String, String, String>() {
-        override fun doInBackground(vararg params: String?): String {
-            var refBan = FirebaseDatabase.getInstance().reference.child("Banned")
-            refBan.addValueEventListener(object : ValueEventListener {
-                override fun onCancelled(p0: DatabaseError) {}
-
-                override fun onDataChange(p0: DataSnapshot) {
-                    for (element in p0.children){
-                        if(refuserContact.length>1) {
-                            if (element.key.toString().equals(refuserContact)) {
-                                Toast.makeText(
-                                    this@MainActivity,
-                                    "You have got banned from Admin, Please contact Admin",
-                                    Toast.LENGTH_LONG
-                                ).show()
-                                FirebaseAuth.getInstance().signOut()
-                            }
-                        }
-                    }
-                }
-            })
-
-            return ""
-        }
-    }
-    }
+}

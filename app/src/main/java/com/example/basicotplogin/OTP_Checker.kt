@@ -164,8 +164,8 @@ class OTP_Checker : AppCompatActivity() {
 
             val userHashMap = HashMap<String, Any>()
             userHashMap["uid"] = firebaseUserID
-            userHashMap["profile"] = "gs://kaiseho-5e57c.appspot.com/profile_image.png"
-            userHashMap["search"] = Username.toLowerCase()
+            userHashMap["profile"] = "gs://kaiseho-5e57c.appspot.com/profile_image.png" //gs://kaiseho-5e57c.appspot.com/profile_image.png
+            userHashMap["search"] = Username.trim().toLowerCase()
             userHashMap["status"] = "offline"
             userHashMap["username"] = Username
             userHashMap["phone"] = Contact_no

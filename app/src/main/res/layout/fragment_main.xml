@@ -22,6 +22,7 @@
             android:textColor="#000000"
             android:background="#A3D7E6"
             android:padding="8dp"
+            android:visibility="gone"
             />
 
         <androidx.recyclerview.widget.RecyclerView

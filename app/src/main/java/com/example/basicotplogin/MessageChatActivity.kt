@@ -74,12 +74,12 @@ class MessageChatActivity : AppCompatActivity() {
         reference = FirebaseDatabase.getInstance().reference          //code to get all details of user using userID
             .child("Users").child(userIdVisit)
 
-        reference!!.addValueEventListener(object : ValueEventListener {
+        reference!!.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(p0: DataSnapshot) {
                 val user: Users? = p0.getValue(Users::class.java)
 
                 user_name_mc.text = user!!.getUsername()
-                Picasso.get().load(user.getProfile()).into(profile_image_mc)
+                Picasso.get().load(user.getProfile()).placeholder(R.drawable.profile_image).into(profile_image_mc)
                 phoneNumber = user.getPhone().toString()
 
                 //retrieveMessages(firebaseUser!!.uid, userIdVisit, user.getProfile())

@@ -160,7 +160,7 @@ class PostAdapter (mContext: Context,
         }
 
         try {
-            Picasso.get().load(user.getSenderImage()).into(holder.userProfileImage)
+            Picasso.get().load(user.getSenderImage()).placeholder(R.drawable.profile_image).into(holder.userProfileImage)
         }catch (e: Exception){
             Picasso.get().load("@drawable/ic_profile").into(holder.userProfileImage)
         }

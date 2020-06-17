@@ -67,9 +67,8 @@ class SearchUser : AppCompatActivity() {
             }
 
             override fun onTextChanged(cs: CharSequence?, start: Int, before: Int, count: Int) {
-                searchForUsers(cs.toString().toLowerCase())
+                searchForUsers(cs.toString().trim().toLowerCase())
             }
-
 
         })
     }

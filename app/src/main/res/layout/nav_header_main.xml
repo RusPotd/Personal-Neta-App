@@ -20,11 +20,10 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/NavProfile"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
             android:paddingTop="@dimen/nav_header_vertical_spacing"
             app:srcCompat="@drawable/profile_image"
-
             />
 
         <ImageView
@@ -43,14 +42,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:layout_marginLeft="15dp"
         android:textColor="#000000"
         android:text="Rushikesh Potdar"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <TextView
         android:id="@+id/NavPhone"
-        android:layout_marginLeft="15dp"
         android:textColor="#055C73"
         android:layout_marginTop="2dp"
         android:layout_width="wrap_content"

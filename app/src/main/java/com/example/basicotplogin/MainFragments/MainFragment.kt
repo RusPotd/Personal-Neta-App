@@ -76,14 +76,6 @@ class MainFragment : Fragment() {
 
                 Log.i("\n\n\nList : ", my_dict.toString())
 
-                view.create_post_btn.setOnClickListener {
-                    val intent =  Intent(context, CreatePost::class.java)
-                    intent.putExtra("dict", my_dict)
-                    Log.i("Dictionary Send", "success ")
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                    startActivity(intent)
-                }
-
                 //check admin
 
                 refAdmin = FirebaseDatabase.getInstance().reference.child("Admin")
@@ -98,6 +90,15 @@ class MainFragment : Fragment() {
                                 view.create_post_btn.visibility = View.VISIBLE
 
                                 fab.visibility = View.GONE
+
+                                view.create_post_btn.setOnClickListener {
+                                    val intent =  Intent(context, CreatePost::class.java)
+                                    intent.putExtra("dict", my_dict)
+                                    Log.i("Dictionary Send", "success ")
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    startActivity(intent)
+                                }
+
                             }
                             else{
                                 view.create_post_btn.visibility = View.GONE  //GONE
@@ -114,16 +115,12 @@ class MainFragment : Fragment() {
                         retrieveAllPosts()
                     }
 
-                    override fun onCancelled(p0: DatabaseError) {
-                        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-                    }
+                    override fun onCancelled(p0: DatabaseError) {}
                 })
 
             }
 
-            override fun onCancelled(BroadCastName: DatabaseError) {
-                //
-            }
+            override fun onCancelled(BroadCastName: DatabaseError) {}
         })
 
         return view
