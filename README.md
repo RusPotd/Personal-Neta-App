@@ -1,4 +1,4 @@
-# Personal-Neta-App
+# Personal-Social-Media-App
 version 2
 
 This App enables individual to use it as personal social media app
